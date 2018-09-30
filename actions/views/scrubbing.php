@@ -31,7 +31,7 @@
                     <label for="file_source" class="col-2 col-form-label">CSV file:</label><br/>
 
                     <div class="col col-10">
-                      <input type="file" name="file_source" id="file_source" class="form-control-file" value="<?=$file_source?>" " accept=".csv, .txt, .zip, application/zip, text/csv, text/plain" /><br/>
+                      <input type="file" name="file_source[]" id="file_source" class="form-control-file" accept=".csv, .txt, .zip, application/zip, text/csv, text/plain" multiple="multiple" /><br/>
 
                       <? if (!empty($theLastQueuedItem)) : ?>
                       <small style="color:gray">If you don't upload a new file, the "<em><?=$theLastQueuedItem['filename']?></em>" will be used</small>
@@ -187,10 +187,15 @@ function toggleStatesSelector() {
             <?
             switch ($row['status']) {
                 case 'success':
-                    $url = 'temp/csv/'. $row['id'] . '.csv';
-                    echo '<a href="'.$url.'">Download CSV</a>';
-                    if (!empty($row['final_rows_count'])) {
-                      echo '<br/><small class="text-muted">(' . number_format($row['final_rows_count']) . ' rows)</small>';
+                    if ($row['final_rows_count']) {
+                      $url = 'temp/csv/'. $row['id'] . '.csv';
+                      echo '<a href="'.$url.'">Download CSV</a>';
+                      if (!empty($row['final_rows_count'])) {
+                        echo '<br/><small class="text-muted">(' . number_format($row['final_rows_count']) . ' rows)</small>';
+                      }
+                    }
+                    else {
+                        echo '<small class="text-muted">Empty result.</small>';
                     }
                     break;
 
