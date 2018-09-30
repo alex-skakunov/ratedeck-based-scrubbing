@@ -1,176 +1,115 @@
 <?php
 
-$areacodeList = array(
-  'Alabama',
-  'Alaska',
-  'American Samoa',
-  'Arizona',
-  'Arkansas',
-  'California',
-  'Canada',
-  'Colorado',
-  'Connecticut',
-  'Delaware',
-  'Florida',
-  'Georgia',
-  'Guam',
-  'Hawaii',
-  'Idaho',
-  'Illinois',
-  'Indiana',
-  'Iowa',
-  'Kansas',
-  'Kentucky',
-  'Louisiana',
-  'Maine',
-  'Maryland',
-  'Massachusetts',
-  'Michigan',
-  'Minnesota',
-  'Mississippi',
-  'Missouri',
-  'Montana',
-  'Nebraska',
-  'Nevada',
-  'New Hampshire',
-  'New Jersey',
-  'New Mexico',
-  'New York',
-  'North Carolina',
-  'North Dakota',
-  'Northern Mariana Islands',
-  'Ohio',
-  'Oklahoma',
-  'Oregon',
-  'Pennsylvania',
-  'Puerto Rico',
-  'Rhode Island',
-  'South Carolina',
-  'South Dakota',
-  'Tennessee',
-  'Texas',
-  'Utah',
-  'Vermont',
-  'Virgin Islands',
-  'Virginia',
-  'Washington',
-  'Washington, DC',
-  'West Virginia',
-  'Wisconsin',
-  'Wyoming'
-);
+
 ?>
 <!--
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
 -->
-<div style="text-align: center; margin-bottom: 10px;">
-	<h1>
-  		Do the scrubbing
-	</h1>
+<div style="text-align: center; margin-bottom: 40px">
+  <h1>
+      Scrubbing
+  </h1>
 </div>
 
+<button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Queue a new file</button><br/><br/>
 
-<form method="post" enctype="multipart/form-data" onsubmit="$('#submit').attr('disabled', 'diabled'); $('#loader').show();">
-   <input type="hidden" name="version" value="1.0" />
-   <table border="0" align="center">
-    <tr>
-      <td>
-      	<label for="file_source">CSV file to do scrubbing:</label><br/>
-      </td>
-      <td rowspan="8" width="10px">&nbsp;</td>
-      <td>
-      	<input type="file" name="file_source" id="file_source" class="edt" value="<?=$file_source?>" " accept=".csv, .txt, .zip, application/zip, text/csv, text/plain" /><br/>
-      	<small style="color:gray">(Leave this field empty to re-use the data from previous upload)</small>
-      </td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td align="right"><label for="max_price">Max price:</label></td>
-      <td>
-      	<input type="text" name="max_price" id="max_price" class="edt"  pattern="[0-9\.]+" value="<?=$max_price?>" style="width: 10em">
-      </td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td align="right">Type:</td>
-      <td align="left">
-      	<input type="checkbox" name="wireless" value="1" id="wireless" <?=!empty($wireless) ? 'checked="checked"' : ''?>/>
-      	<label for="wireless">Wireless</label><br/>
+<div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Queue a new file</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
 
-      	<input type="checkbox" name="landline" value="1" id="landline" <?=!empty($landline) ? 'checked="checked"' : ''?>/>
-      	<label for="landline">Landline</label>
-      </td>
-    </tr>
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td align="right" valign="top">States:</td>
-      <td align="left">
-        <input type="checkbox" name="areacodes_all" value="1" id="areacodes_all" <?=!empty($areacodes_all) ? 'checked="checked"' : ''?> onclick="toggleStatesSelector()"/>
-        <label for="areacodes_all">Include all</label><br/><br/>
+          <form method="post" id="form" enctype="multipart/form-data" onsubmit="$('#submit').attr('disabled', 'diabled'); $('#loader').show();">
+             <input type="hidden" name="version" value="1.0" />
 
-        <div id="states_list" style="height: 15em; border: solid 1px gray; overflow: scroll;">
-          <?php
-            foreach($areacodeList as $areacode) :
-              $token = str_replace(' ', '_', strtolower($areacode));
-          ?>
-            <input type="checkbox" name="areacode[]" value="<?=$token?>" id="<?=$token?>" <?=empty($areacodes) || !empty($areacodes[$token]) ? 'checked="checked"' : ''?> <?=!empty($areacodes_all) ? 'disabled="disabled"' : ''?>/>
-            <label for="<?=$token?>" <?=!empty($areacodes_all) ? 'class="disabled"' : ''?>><?=$areacode?></label><br/>
-          <?php
-            endforeach;
-          ?>
-        </div>
-        <a href="#" onclick="$('div#states_list input').each(function() {$(this).attr('checked', 'checked');}); return false;"><small>select all</small></a> /
-        <a href="#" onclick="$('div#states_list input').each(function() {$(this).removeAttr('checked');}); return false;"><small>select none</small></a>
-      </td>
-    </tr>
+                <div class="form-group row">
+                    <label for="file_source" class="col-2 col-form-label">CSV file:</label><br/>
 
-    <tr>
-      <td>&nbsp;</td>
-      <td>&nbsp;</td>
-    </tr>
-    <tr>
-      <td colspan="3" align="center"><input id="submit" type="Submit" name="Go" value="Do the scrubing!" class="btn" /></td>
-    </tr>
-  </table>
-</form>
+                    <div class="col col-10">
+                      <input type="file" name="file_source" id="file_source" class="form-control-file" value="<?=$file_source?>" " accept=".csv, .txt, .zip, application/zip, text/csv, text/plain" /><br/>
 
-<? if(!empty($rows_count)): ?>
-	<fieldset>
-	  <legend>Import statiscics:</legend>
-	  <ul style="text-align: left">
-	  	<? foreach($rows_count as $caption => $number):?>
-	  		<li><b><?=$caption?>:</b> <?=$number?></li>
-	  	<? endforeach;?>
-		<?
-		    $url = '/csv/?page=download&max_price='
-			    . $max_price
-			    . '&wireless='
-			    . $wireless
-		    	    . '&landline='
-			    . $landline;
-    		    if(!empty($areacodes)) {
-        		foreach($areacodes as $code) {
-        		    $url .= '&areacode[]=' . $code;
-        		}
-    		    }
-		?>
-	  	<li>You can download <a href="<?=$url?>">the CSV file</a></li>
-	  	<li>You can download <a href="<?=$url?>&zip=1">the zipped file</a></li>
-	  </ul>
-	</fieldset>
-<? endif; ?>
+                      <? if (!empty($theLastQueuedItem)) : ?>
+                      <small style="color:gray">If you don't upload a new file, the "<em><?=$theLastQueuedItem['filename']?></em>" will be used</small>
+                      <? endif; ?>
 
-<div style="display: none; text-align: center;" id="loader">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif" width="32" height="32" alt="loader" />
+
+                      <? /*
+                      <div class="progress">
+                        <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
+                      </div>
+                      */ ?>
+
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <label for="max_price" class="col-2 col-form-label">Max price:</label>
+                    <div class="col col-10">
+                      <input type="text" name="max_price" id="max_price" class="form-control" pattern="[0-9\.]+" value="<?=$max_price?>" style="width: 10em">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                  <div class="col col-2">Type:</div>
+                  <div class="col col-10" style="text-align: left;">
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          <input class="form-check-input" type="checkbox" name="wireless" value="1" id="wireless" <?=!empty($wireless) ? 'checked="checked"' : ''?>> Wireless
+                        </label>
+                      </div>
+
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          <input class="form-check-input" type="checkbox" name="landline" value="1" id="landline" <?=!empty($landline) ? 'checked="checked"' : ''?>> Landline
+                        </label>
+                      </div>
+                  </div>
+                </div>
+
+                <div class="form-group row">
+                  <div class="col col-2">States:</div>
+                  <div class="col col-10" style="text-align: left;">
+
+                      <div class="form-check">
+                        <label class="form-check-label">
+                          <input class="form-check-input" type="checkbox" name="areacodes_all" value="1" id="areacodes_all" <?=!empty($areacodes_all) ? 'checked="checked"' : ''?> onclick="toggleStatesSelector()"> Include all
+                        </label>
+                      </div>
+
+
+                        <div  class="form-group" id="states_list" style="height: 12em; width: 20em; border: solid 1px gray; overflow: scroll; text-align: left; padding: 5px 15px">
+                        <?php
+                          foreach($areacodeList as $token => $areacode) :
+                        ?>
+                            <div class="form-check">
+                              <label class="form-check-label">
+                                <input class="form-check-input" type="checkbox" name="areacode[]" value="<?=$token?>" id="<?=$token?>" <?=empty($areacodes) || !empty($areacodes[$token]) ? 'checked="checked"' : ''?> <?=!empty($areacodes_all) ? 'disabled="disabled"' : ''?>> <?=$areacode?>
+                              </label>
+                            </div>
+                        <?php
+                          endforeach;
+                        ?>
+                        </div>
+
+                    <a href="#" onclick="$('div#states_list input').each(function() {$(this).attr('checked', 'checked');}); return false;"><small>select all</small></a> /
+                    <a href="#" onclick="$('div#states_list input').each(function() {$(this).removeAttr('checked');}); return false;"><small>select none</small></a>
+                  </div>
+                </div>
+
+          </form>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="submit" name="Go" class="btn btn-primary" data-dismiss="modal" onclick="$('#form').submit();">Queue the job</button>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script type="text/javascript">
@@ -184,3 +123,92 @@ function toggleStatesSelector() {
   })
 }
 </script>
+
+<? if(empty($recordset)) {
+  return;
+}
+?>
+
+<table class="table table-striped">
+  <thead class="thead-dark">
+    <tr>
+      <th scope="col">#</th>
+      <th scope="col">Filename</th>
+      <th scope="col">Max price</th>
+      <th scope="col">Type</th>
+      <th scope="col">States</th>
+      <th scope="col">—</th>
+    </tr>
+  </thead>
+  <tbody id="table-body">
+      <? foreach ($recordset as $row) : ?>
+        <tr>
+          <th scope="row"><?=$row['id']?></th>
+          <td><?=$row['filename']?>
+              <?if(!empty($row['rows_count'])):?>
+                  <br/><small class="text-muted">(<?=number_format($row['rows_count'])?> rows)</small>
+              <? endif; ?>
+          </td>
+          <td><?=$row['max_price']?></td>
+          <td><?
+            $list = array();
+            if(!empty($row['include_wireless_type'])) {
+                $list[] = 'Wireless';
+            }
+            if(!empty($row['include_landline_type'])) {
+                $list[] = 'Landline';
+            }
+            echo implode(' + ', $list);
+          ?></td>
+          <td>
+              <? 
+                  if(empty($row['specific_states_list'])) {
+                      echo 'All';
+                  }
+                  else {
+                      $list = array();
+                      foreach (explode(',', $row['specific_states_list']) as $token) {
+                          $_token = trim(strtolower($token));
+                          if(empty($areacodeList[$_token])) {
+                              continue;
+                          }
+                          $list[] = $areacodeList[$_token];
+                      }
+                      if (sizeof($list) < 4) {
+                          echo '<em>', implode(', ', $list), '</em>';
+                      }
+                      else {
+                          echo '<em title="', implode(', ', $list),'">', current($list), ' and ', sizeof($list)-1, ' more</em>'; 
+                      }
+                  }
+            ?>
+          </td>
+          <td>
+            <?
+            switch ($row['status']) {
+                case 'success':
+                    $url = '/csv/?page=download&id='. $row['id'];
+                    //echo '<a href="', $url, '">CSV</a> or <a href="', $url, '&zip=1">zip</a>';
+                    echo '<a href="#" onclick="alert(\'Not implemented yet\')">CSV</a> or <a href="#" onclick="alert(\'Not implemented yet\')">zip</a>';
+                    break;
+
+                case 'error':
+                    echo 'Error: ' . $row['error_message'];
+                    break;
+                
+                default:
+                    echo '<em>', ucfirst($row['status']), '</em>';
+                    if (!empty($row['progress']) && $row['progress'] < 100) {
+                        echo ' <small class="text-muted">(', number_format($row['progress']), '%)</small>';
+                    }
+            }
+            ?>
+          </td>
+        </tr>
+      <? endforeach; ?>
+  </tbody>
+</table>
+
+<p class="text-muted"><a href="?page=scrubbing&erase_queue=1" onclick="return confirm('Are you sure you want to delete all these records?')">Click here to erase the queue</a></p>
+
+
