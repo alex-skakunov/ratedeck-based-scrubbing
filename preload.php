@@ -12,12 +12,6 @@ if( !is_writable( TEMP_DIR ) )
   exit ( "Temporary folder must be writable: <code>".TEMP_DIR."</code>" );
 }
 
-if( !is_writable( SESSIONS_DIR ) )
-{
-  exit ( "Sessions folder must be writable: <code>".SESSIONS_DIR."</code>" );
-}
-
-
 if ( -1 == version_compare( PHP_VERSION, '4.1.0' ) ) {
     exit ('Please, you PHP version greater than 4.1.0 - files uploads will not work properly');
 }
@@ -46,10 +40,6 @@ if( !ini_get("file_uploads") ) //check whether administrator must tune PHP
 }
 
 ini_set('auto_detect_line_endings', 1);
-
-session_save_path(SESSIONS_DIR);
-session_start();
-setcookie(session_name(),session_id(),time() + SESSION_TTL, "/");
 
 $uploadErrors = array(
     UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',

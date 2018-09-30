@@ -22,7 +22,5 @@ define('DB_TABLE'   , 'ratedeck');
 define("CURRENT_DIR"  , getcwd() . DIRECTORY_SEPARATOR );   //stand-alone classes
 define("CLASSES_DIR"  , CURRENT_DIR . 'classes' .  DIRECTORY_SEPARATOR);   //stand-alone classes
 define("ACTIONS_DIR"  , CURRENT_DIR . 'actions' .  DIRECTORY_SEPARATOR);   //controllers processing sumbitted data and preparing output
-define("SESSIONS_DIR",  CURRENT_DIR . 'temp' . DIRECTORY_SEPARATOR . 'sessions' . DIRECTORY_SEPARATOR); //sessions are stored here
 define("TEMP_DIR",  CURRENT_DIR . 'temp' . DIRECTORY_SEPARATOR . 'csv' . DIRECTORY_SEPARATOR); //all uploaded files will be copied here so that they won't be deleted between requests
 //define('TEMP_DIR', '/var/lib/mysql-files/');
-define("SESSION_TTL",  60*60*24*30 ); //30 days
