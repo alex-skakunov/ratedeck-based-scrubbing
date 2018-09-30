@@ -23,39 +23,23 @@
 
 class Quick_CSV_import
 {
-  var $table_name; //where to import to
-  var $file_name;  //where to import from
-  var $use_csv_header; //use first line of file OR generated columns names
-  var $line_separate_char; //character(s) to separate lines (usually \n ) 
-  var $field_separate_char; //character to separate fields
-  var $field_enclose_char; //character to enclose fields, which contain separator char into content
-  var $field_escape_char;  //char to escape special symbols
-  var $error; //error message
-  var $arr_csv_columns; //array of columns
-  var $arr_csv_columns_to_load; //array of columns
-  var $table_exists; //flag: does table for import exist
-  var $make_temporary; //flag: does table for import exist
-  var $additional_create;
-  var $rows_count; //how many rows has been imported
-  var $encoding; //encoding table, used to parse the incoming file. Added in 1.5 version
-  var $fDB; //database object ref
-  
-  public function __construct($fDB, $file_name="")
-  {
-    if(!is_object($fDB) || empty($fDB->link))
-    {
-      throw new Exception('Wrong database object');
-    }
-    $this->fDB = $fDB;
-    $this->file_name = $file_name;
-    $this->arr_csv_columns = array();
-    $this->use_csv_header = true;
-    $this->line_separate_char = '\n';
-    $this->field_separate_char = ",";
-    $this->field_enclose_char  = "\"";
-    $this->field_escape_char   = "\\";
-    $this->table_exists = false;
-  }
+  public $table_name; //where to import to
+  public $file_name;  //where to import from
+  public $use_csv_header  = true; //use first line of file OR generated columns names
+  public $line_separate_char = '\n'; //character(s) to separate lines (usually \n ) 
+  public $field_separate_char = ","; //character to separate fields
+  public $field_enclose_char  = "\""; //character to enclose fields, which contain separator char into content
+  public $field_escape_char   = "\\";  //char to escape special symbols
+  public $error; //error message
+  public $arr_csv_columns= array(); //array of columns
+  public $arr_csv_columns_to_load; //array of columns
+  public $table_exists = false; //flag: does table for import exist
+  public $make_temporary; //flag: does table for import exist
+  public $additional_create;
+  public $rows_count; //how many rows has been imported
+  public $encoding = 'utf8'; //encoding table, used to parse the incoming file. Added in 1.5 version
+  public $parameters = array();
+  public $fields_list;
   
   function import()
   {
@@ -72,64 +56,44 @@ class Quick_CSV_import
         $this->line_separate_char = '\n';
     }
 
-    if($this->table_exists)
+    if(!$this->table_exists)
     {
+      throw new Exception("Table does not exist");
+    }
 
 
     if(!empty($this->truncate_table)) {
         $sql = 'TRUNCATE TABLE ' . $this->table_name;
-        $this->fDB->query($sql);
+        query($sql);
     }
 
-      $sql = "LOAD DATA INFILE '".@mysql_escape_string($this->file_name).
-             "' IGNORE INTO TABLE `".$this->table_name.
-             "` FIELDS TERMINATED BY '".@mysql_escape_string($this->field_separate_char).
-             "' OPTIONALLY ENCLOSED BY '".@mysql_escape_string($this->field_enclose_char).
-             "' ESCAPED BY '".@mysql_escape_string($this->field_escape_char).
-             "' LINES TERMINATED BY '". $this->line_separate_char .
-             "' ".
-             ($this->use_csv_header ? " IGNORE 1 LINES " : "");
-//exit($sql);
-      $this->fDB->query($sql);
+    $sql = 'LOAD DATA LOCAL INFILE "'. $this->file_name .'"
+              IGNORE INTO TABLE `'. $this->table_name .'`
+              FIELDS
+                  TERMINATED BY "'. $this->field_separate_char .'"
+                  OPTIONALLY ENCLOSED BY "'. str_replace('"', '\"', $this->field_enclose_char) .'"
+              LINES
+                  TERMINATED BY "'. $this->line_separate_char .'" '
+           . ($this->use_csv_header ? ' IGNORE 1 LINES' : '');
 
-/*
-$bulkSize = 100;
-$bulkList = array();
-$row = 0;
-if (($handle = fopen($this->file_name, "r")) !== FALSE) {
-    while (($data = fgetcsv($handle, 1000, ",")) !== FALSE) {
-        $row++;
-        if (1 == $row && $this->use_csv_header) continue;
-        $bulkList[] = '"' . implode('","', $data) . '"';
-        if (sizeof($bulkList) >= $bulkSize) {
-          $sql = 'INSERT IGNORE INTO ' . $this->table_name . ' VALUES (' . implode('), (', $bulkList) . ')';
-          $res = $this->fDB->query($sql);
-          $this->error = $this->fDB->fError;
-          $bulkList = array();
-        }
-    }
-
-    if (sizeof($bulkList) > 0) { //paste the rest
-        $sql = 'INSERT IGNORE INTO ' .  $this->table_name . ' VALUES (' . implode('), (', $bulkList) . ')';
-        $res = $this->fDB->query($sql);
-        $this->error = $this->fDB->fError;
-    }
-
-    fclose($handle);
-}
-*/
-      $this->error = $this->fDB->fError;
-      if(empty($this->error)) //OK!
-      {
-        $sql = "SELECT COUNT(*) AS cnt
-                 FROM `".$this->table_name."`";
-        $res = $this->fDB->query($sql);
-        $this->error = $this->fDB->fError;
-        if(empty($this->error)) //OK!
-        {
-          $this->rows_count = $this->fDB->getField();
-        }
+    $sql .= ($this->fields_list ? ('(' . implode(',', $this->fields_list) . ')') : '');
+    
+    if (!empty($this->parameters)) {
+      $sql .= ' SET ';
+      $compiledParametersList = array();
+      foreach ($this->parameters as $parameterName => $parameterValue) {
+        $compiledParametersList[] = $parameterName . '=' . $parameterValue;
       }
+      $sql .= implode(', ', $compiledParametersList);
+    }
+
+    $stmt = query($sql);
+    $this->error = $stmt->errorInfo()[2];
+    if(empty($this->error)) {
+        $sql = 'SELECT COUNT(*) FROM `'. $this->table_name .'`';
+        $stmt = query($sql);
+        $this->rows_count = $stmt->fetchColumn();
+        $this->error = $stmt->errorInfo()[2];
     }
   }
   
@@ -179,33 +143,16 @@ if (($handle = fopen($this->file_name, "r")) !== FALSE) {
     {
       $arr = array();
       foreach($this->arr_csv_columns as $i=>$column)
-        $arr[] = "`".$column['name']."` ".$column['type'];
+        $arr[] = "`".$column['name']."` CHAR(20) NOT NULL";
       if( !empty($this->additional_create) )
         $arr[] = $this->additional_create;
       $sql .= implode(",", $arr);
       $sql .= ")";
-      //new dBug($sql);
-      $res = $this->fDB->query($sql);
+
+      query($sql);
       $this->error = $this->fDB->fError;
       $this->table_exists = empty($this->error);
     }
-  }
-  
-  /* change start. Added in 1.5 version */
-  //returns recordset with all encoding tables names, supported by your database
-  function get_encodings()
-  {
-    $rez = array();
-    $sql = "SHOW CHARACTER SET";
-    $res = $this->fDB->query($sql);
-    if($this->fDB->fRowsNumber > 0 && empty($this->fDB->fError))
-    {
-      while ($row = $this->fDB->getRow())
-      {
-        $rez[$row["Charset"]] = ("" != $row["Description"] ? $row["Description"] : $row["Charset"]); //some MySQL databases return empty Description field
-      }
-    }
-    return $rez;
   }
   
   /* change start. Added in 1.5 version */
@@ -223,7 +170,7 @@ if (($handle = fopen($this->file_name, "r")) !== FALSE) {
            $this->table_name,
            ($limit > 0 ? 'LIMIT '.($page-1)*$limit.', '.$limit : '')
            );
-    $res = $this->fDB->query($sql);
+    query($sql);
     //new dBug($sql);
     if( !empty($this->fDB->fError) )
     {
@@ -234,7 +181,7 @@ if (($handle = fopen($this->file_name, "r")) !== FALSE) {
     $arrColumns = $this->fDB->getColumn($column_name);
     //new dBug($arrColumns);
     $sql = "SELECT FOUND_ROWS()";
-    $res = $this->fDB->query($sql);
+    query($sql);
     $whole_count = $this->fDB->getField();
     return $arrColumns;
   }
@@ -245,7 +192,7 @@ if (($handle = fopen($this->file_name, "r")) !== FALSE) {
     if("" == $encoding)
       $encoding = $this->encoding;
     $sql = "SET SESSION character_set_database = " . $encoding; //'character_set_database' MySQL server variable is [also] to parse file with rigth encoding
-    $this->fDB->query($sql);
+    query($sql);
   }
   /* change end */
 

@@ -1,9 +1,10 @@
 <?php
 
 if (!empty($_GET['erase_queue'])) {
-    $filesToDelete = query('SELECT temp_filename FROM `queue`')->fetchAll(PDO::FETCH_ASSOC);
+    $filesToDelete = query('SELECT id, temp_filename FROM `queue`')->fetchAll(PDO::FETCH_ASSOC);
     foreach ($filesToDelete as $file) {
       @unlink(TEMP_DIR . $file['temp_filename']);
+      @unlink(TEMP_DIR . $file['id'] . '.csv');
     }
     query('TRUNCATE TABLE `queue`');
     header('Location: ?page=scrubbing');
@@ -15,9 +16,9 @@ $landline = 1;
 $areacodes_all = empty($_POST['areacode']);
 
 
-$recordset = query('SELECT * FROM `queue` ORDER BY `id` DESC LIMIT 100')->fetchAll(PDO::FETCH_ASSOC);
+$recordset = query('SELECT * FROM `queue` ORDER BY `id` DESC')->fetchAll(PDO::FETCH_ASSOC);
 
-$theLastQueuedItem = query('SELECT * FROM `queue` WHERE `filename` IS NOT NULL ORDER BY `id` DESC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+$theLastQueuedItem = query('SELECT * FROM `queue` ORDER BY `id` DESC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
 
 
 $_areacodeList = query('SELECT DISTINCT `region` FROM `areacode` ORDER BY `region` ASC')->fetchAll(PDO::FETCH_ASSOC);
@@ -67,32 +68,6 @@ if( is_uploaded_file($_FILES['file_source']['tmp_name']) && UPLOAD_ERR_OK == $er
         unlink($our_file); //remove zip
         $our_file = TEMP_DIR . $csvFilename;
     }
-
-    /*
-    $fQuickCSV = new Quick_CSV_import($db);
-    
-    $fQuickCSV->table_name = 'scrub';
-    $fQuickCSV->file_name = $our_file;
-    $fQuickCSV->use_csv_header = false;
-    $fQuickCSV->make_temporary = false;
-    $fQuickCSV->table_exists = true;
-    $fQuickCSV->truncate_table = true;
-    $fQuickCSV->field_separate_char = ',';
-    $fQuickCSV->encoding = 'utf8';
-    $fQuickCSV->field_enclose_char = '"';
-    $fQuickCSV->field_escape_char = '\\';
-    
-    $fQuickCSV->import();
-    unlink($our_file);
-    if( !empty($fQuickCSV->error) )
-    {
-      $error = $fQuickCSV->error;
-    }
-    elseif( 0 == $fQuickCSV->rows_count )
-    {
-      $error = 'Imported rows count is 0.';
-    }
-    */
 }
 
 if (!empty($_FILES['file_source']['name'])) {
@@ -135,41 +110,3 @@ query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wi
 
 $stmt = query('SELECT * FROM `queue` ORDER BY `id` DESC LIMIT 100');
 $recordset = $stmt->fetchAll();
-
-/*
-$rows_count = array();
-
-$stmt = query('SELECT COUNT(*) FROM scrub');
-$rows_count['Original records in the table'] = $stmt->fetchColumn();
-
-$max_price = (float)$_POST['max_price'];
-$wireless = !empty($_POST['wireless']) ? 1 : 0;
-$landline = !empty($_POST['landline']) ? 1 : 0;
-
-$sqlTemplate = 'SELECT COUNT(*)
-        FROM scrub
-        INNER JOIN `ratedeck` ON SUBSTR(scrub.number, 1, 6) = ratedeck.NPANXX
-        WHERE ratedeck.Rate <= %f
-          %s
-          AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist`)';
-$typeCriteria = array();
-if (!empty($wireless)) {
-  $typeCriteria[] = 'ratedeck.Wireless = "x"';
-}
-if (!empty($landline)) {
-  $typeCriteria[] = 'ratedeck.Landline = "x"';
-}
-
-$additionalCriteriaClause = !empty($typeCriteria)
-  ? 'AND (' . implode(' OR ', $typeCriteria) . ')'
-  : '';
-
-if (empty($areacodes_all)) {
-  $statesList = '"' . implode('", "', $areacodes) . '"';
-  $additionalCriteriaClause .= sprintf('AND SUBSTR(scrub.`number`, 1, 3) IN (SELECT `code` FROM `areacode` WHERE REPLACE(LCASE(`region`), " ", "_") IN (%s))', $statesList);
-}
-$sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause);
-$stmt = query($sql);
-$rows_count['After applying price and wireless/landline filters'] = $stmt->fetchColumn();
-
-*/

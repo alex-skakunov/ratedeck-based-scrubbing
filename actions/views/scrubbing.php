@@ -187,9 +187,11 @@ function toggleStatesSelector() {
             <?
             switch ($row['status']) {
                 case 'success':
-                    $url = '/csv/?page=download&id='. $row['id'];
-                    //echo '<a href="', $url, '">CSV</a> or <a href="', $url, '&zip=1">zip</a>';
-                    echo '<a href="#" onclick="alert(\'Not implemented yet\')">CSV</a> or <a href="#" onclick="alert(\'Not implemented yet\')">zip</a>';
+                    $url = 'temp/csv/'. $row['id'] . '.csv';
+                    echo '<a href="'.$url.'">Download CSV</a>';
+                    if (!empty($row['final_rows_count'])) {
+                      echo '<br/><small class="text-muted">(' . number_format($row['final_rows_count']) . ' rows)</small>';
+                    }
                     break;
 
                 case 'error':
@@ -209,6 +211,6 @@ function toggleStatesSelector() {
   </tbody>
 </table>
 
-<p class="text-muted"><a href="?page=scrubbing&erase_queue=1" onclick="return confirm('Are you sure you want to delete all these records?')">Click here to erase the queue</a></p>
+<p class="text-muted"><small><a href="?page=scrubbing&erase_queue=1" onclick="return confirm('Are you sure you want to delete all these records?')">Click here to erase the queue</a></small></p>
 
 
