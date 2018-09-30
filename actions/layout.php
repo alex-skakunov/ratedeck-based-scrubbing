@@ -9,7 +9,7 @@
   <!-- Custom styles for this template -->
   <style type="text/css">
   .starter-template {
-    padding: 3rem 1.5rem;
+    padding: 1rem 1.5rem;
     text-align: center;
   }
   label.disabled {
@@ -59,9 +59,6 @@
     font-size: 70%;
   }
   
-  th {
-    vertical-align: top;
-  }
   </style>
 </head>
 
@@ -77,10 +74,14 @@
         <ul class="navbar-nav mr-auto">
 
           <?
-            $itemsList = array('ratedeck', 'blacklist', 'scrubbing');
-            foreach ($itemsList as $item) {
+            $itemsList = array(
+              'ratedeck' => 'ratedeck',
+              'blacklist' => 'DNC list',
+              'scrubbing' => 'scrubbing'
+            );
+            foreach ($itemsList as $item => $title) {
               echo '<li class="nav-item ', (CURRENT_ACTION == $item ? 'active' : ''), '">';
-              echo '<a  class="nav-link" href="/csv/?page=' . $item . '">' . ucfirst($item) . '</a>';
+              echo '<a  class="nav-link" href="/csv/?page=' . $item . '">' . ucfirst($title) . '</a>';
               echo '</li>'; 
             }
           ?>
