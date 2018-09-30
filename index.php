@@ -1,15 +1,25 @@
 <?php
 
-include "preload.inc"; //this includes all necessary classes and configs
+include "preload.php"; //this includes all necessary classes and configs
 
-if(empty($attributes['page'])) {
-  $attributes['page'] = 'ratedeck';
+if(empty($_REQUEST['page'])) {
+  $_REQUEST['page'] = 'ratedeck';
 }
-define('CURRENT_ACTION', strtolower($attributes['page']));
-include ACTIONS_DIR . 'controllers/' . $attributes['page'] . '.php';
+$_REQUEST['page'] = strtolower(trim($_REQUEST['page']));
+define('CURRENT_ACTION', $_REQUEST['page']);
+
+if (!file_exists(ACTIONS_DIR . 'controllers/' . $_REQUEST['page'] . '.php')) {
+    header('Location: index.php');
+}
+
+include ACTIONS_DIR . 'controllers/' . $_REQUEST['page'] . '.php';
+
+if (!file_exists(ACTIONS_DIR . 'views/' . $_REQUEST['page'] . '.php')) {
+    return;
+}
 
 ob_start();
-include ACTIONS_DIR . 'views/' . $attributes['page'] . '.php';
+include ACTIONS_DIR . 'views/' . $_REQUEST['page'] . '.php';
 $renderedTemplate = ob_get_contents();
 ob_end_clean();
 
