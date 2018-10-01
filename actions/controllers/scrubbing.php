@@ -130,3 +130,4 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
 }
 
 $recordset = query('SELECT * FROM `queue` ORDER BY `id` DESC')->fetchAll(PDO::FETCH_ASSOC); //refetch the fresh copy
+$theLastQueuedItem = query('SELECT * FROM `queue` ORDER BY `id` DESC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
