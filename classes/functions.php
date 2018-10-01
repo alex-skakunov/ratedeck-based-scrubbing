@@ -1,4 +1,32 @@
 <?php
+use Zend\Mail\Message;
+use Zend\Mail\Transport\Smtp as SmtpTransport;
+use Zend\Mail\Transport\SmtpOptions;
+
+function sendEmail($subject, $mess) {
+    $message = new Message();
+    $message->addTo(REPORTS_EMAIL_ADDRESS);
+    $message->addFrom('Service Report <'.SMTP_USERNAME.'>');
+    $message->setSubject($subject);
+    $message->setBody($mess);
+
+    $transport = new SmtpTransport();
+    $options   = new SmtpOptions([
+        'name'              => 'gmail.com',
+        'host'              => 'smtp.gmail.com',
+        'port'              => 587,
+        // Notice port change for TLS is 587
+        'connection_class'  => 'plain',
+        'connection_config' => [
+            'username' => SMTP_USERNAME,
+            'password' => SMTP_PASSWORD,
+            'ssl'      => 'tls',
+        ],
+    ]);
+    $transport->setOptions($options);
+    return $transport->send($message);
+}
+
 
 //Returns the first non-empty value in the list, or an empty line if there are no non-empty values.
 function coalesce()
