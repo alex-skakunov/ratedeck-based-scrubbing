@@ -54,7 +54,7 @@ $sqlTemplate = 'SELECT number
         INNER JOIN `ratedeck` ON SUBSTR(scrub.number, 1, 6) = ratedeck.NPANXX
         WHERE ratedeck.Rate <= %f
           %s
-          AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist`)
+          AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_'.$item['blacklist_type'].'`)
         INTO OUTFILE "%s"';
 $typeCriteria = array();
 if (!empty($wireless)) {
