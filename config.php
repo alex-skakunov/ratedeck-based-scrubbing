@@ -19,6 +19,10 @@ define("DB_PASSWORD", '');
 define("DB_NAME"    , 'ratedeck');
 define('DB_TABLE'   , 'ratedeck');
 
+define('REPORTS_EMAIL_ADDRESS', 'USERNAME@gmail.com');
+define('SMTP_USERNAME', 'USERNAME@gmail.com');
+define('SMTP_PASSWORD', 'STMP PASSWORD');
+
 define("CURRENT_DIR"  , getcwd() . DIRECTORY_SEPARATOR );   //stand-alone classes
 define("CLASSES_DIR"  , CURRENT_DIR . 'classes' .  DIRECTORY_SEPARATOR);   //stand-alone classes
 define("ACTIONS_DIR"  , CURRENT_DIR . 'actions' .  DIRECTORY_SEPARATOR);   //controllers processing sumbitted data and preparing output
