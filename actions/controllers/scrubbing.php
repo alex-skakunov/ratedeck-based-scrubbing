@@ -43,6 +43,10 @@ if (!empty($_POST['areacode'])) {
   }
 }
 
+$blacklistType = strtolower(trim($_POST['blacklist_type']));
+if (!in_array($blacklistType, array('lawsuits', 'master'))) {
+    return $message = 'Please choose a DNC list to upload to';
+}
 
 foreach ($_FILES['file_source']['name'] as $index => $filename) {
     $errorCode = $_FILES['file_source']['error'][$index];
@@ -52,13 +56,14 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
 
     if (UPLOAD_ERR_OK != $errorCode) {
         $errorMessage = $uploadErrors[$errorCode];
-        query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `status`, `error_message`, `created_at`) VALUES (
+        query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `blacklist_type`, `status`, `error_message`, `created_at`) VALUES (
             :original_filename,
             :temp_filename,
             :max_price,
             :include_wireless_type,
             :include_landline_type,
             :specific_states_list,
+            :blacklist_type,
             "error",
             :error_message,
             NOW()
@@ -71,6 +76,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
             ':specific_states_list' => !empty($areacodes) 
               ? implode(',', $areacodes)
               : null,
+            ':blacklist_type' => $blacklistType,
             ':error_message' => $errorMessage
         ));
         continue;
@@ -107,13 +113,14 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
 
   $rows_count = !empty($theLastQueuedItem) ? $theLastQueuedItem['rows_count'] : null;
 
-  query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `rows_count`, `created_at`) VALUES (
+  query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `blacklist_type`, `rows_count`, `created_at`) VALUES (
       :original_filename,
       :temp_filename,
       :max_price,
       :include_wireless_type,
       :include_landline_type,
       :specific_states_list,
+      :blacklist_type,
       :rows_count,
       NOW()
   )', array(
@@ -125,6 +132,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
       ':specific_states_list' => !empty($areacodes) 
         ? implode(',', $areacodes)
         : null,
+      ':blacklist_type' => $blacklistType,      
       ':rows_count' => $rows_count
   ));
 }

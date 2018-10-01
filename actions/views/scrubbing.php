@@ -56,6 +56,18 @@
                 </div>
 
                 <div class="form-group row">
+                    <label class="col-2 col-form-label">DNC:</label>
+                    <div class="col col-10" style="text-align: left;">
+                      <label for="lawsuits_dnc">
+                        <input type="radio" name="blacklist_type" id="lawsuits_dnc" value="lawsuits" checked="checked" /> Lawsuits DNC
+                      </label><br/>
+                      <label for="master_dnc">
+                        <input type="radio" name="blacklist_type" id="master_dnc" value="master"/> Master DNC
+                      </label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
                   <div class="col col-2">Type:</div>
                   <div class="col col-10" style="text-align: left;">
                       <div class="form-check">
@@ -135,6 +147,7 @@ function toggleStatesSelector() {
       <th scope="col">#</th>
       <th scope="col">Filename</th>
       <th scope="col">Max price</th>
+      <th scope="col">DNC list</th>
       <th scope="col">Type</th>
       <th scope="col">States</th>
       <th scope="col">—</th>
@@ -150,6 +163,7 @@ function toggleStatesSelector() {
               <? endif; ?>
           </td>
           <td><?=$row['max_price']?></td>
+          <td><small><?=ucfirst($row['blacklist_type'])?></small></td>
           <td><?
             $list = array();
             if(!empty($row['include_wireless_type'])) {
