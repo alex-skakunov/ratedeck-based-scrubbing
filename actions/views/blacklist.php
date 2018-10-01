@@ -2,18 +2,30 @@
 
 <div style="text-align: center; margin-bottom: 50px;">
 	<h1>
-  		Update the blacklist
+  		Upload the DNC list
 	</h1>
 </div>
 
-<form method="post" enctype="multipart/form-data" onsubmit="$('#submit, #truncate').attr('disabled', 'disabled'); $('#loader').show();">
+<form action="index.php?page=blacklist" method="post" enctype="multipart/form-data" onsubmit="$('#submit, #truncate').attr('disabled', 'disabled'); $('#loader').show();">
    <input type="hidden" name="version" value="1.0" />
    <table border="0" width="50%" align="center">
     <tr>
-      <td align="right"><label for="number">Blacklist file to append:</label></td>
+      <td align="right"><label for="number"><b>DNC file:</b></label></td>
+      <td width="20px">&nbsp;</td>
+      <td style="padding-bottom: 30px; text-align: left; margin-left: 30px; vertical-align: middle">
+          <input type="file" name="file_source" id="file_source" class="edt" accept=".csv, .txt, .zip, application/zip, text/csv, text/plain"/>
+      </td>
+    </tr>
+    <tr>
+      <td align="right"><b>Type:</b></td>
       <td rowspan="2" width="20px">&nbsp;</td>
-      <td>
-          <input type="file" name="file_source" id="file_source" class="edt" value="<?=$file_source?>" accept=".csv, .txt, .zip, application/zip, text/csv, text/plain"/>
+      <td style="text-align: left; margin-left: 30px;">
+          <label for="lawsuits_dnc">
+            <input type="radio" name="blacklist_type" id="lawsuits_dnc" value="lawsuits" checked="checked" /> Lawsuits DNC
+          </label><br/>
+          <label for="master_dnc">
+            <input type="radio" name="blacklist_type" id="master_dnc" value="master"/> Master DNC
+          </label>
       </td>
     </tr>
     <tr>
@@ -21,22 +33,23 @@
       <td>&nbsp;</td>
     </tr>
     <tr>
-      <td colspan="3" align="center"><input id="submit" type="Submit" name="Go" value="Add the numbers to blacklist!" class="btn" /></td>
+      <td colspan="3" align="center">
+        <input id="submit" type="Submit" name="Go" value="Add the numbers to blacklist!" class="btn" />
+      </td>
     </tr>
   </table>
 </form>
 
-<form method="post" enctype="multipart/form-data" style="margin-top: 100px"
-    onsubmit="$('#submit').attr('disabled', 'disabled'); $('#loader').show();">
-   <input type="hidden" name="version" value="1.0" />
-   <table border="0" width="50%" align="center">
-    <tr>
-      <td align="right">
-        <input id="truncate" type="Submit" name="truncate" value="Erase all data in blacklist" class="btn" style="font-size: 14px; color: red;" onclick="return confirm('Do you really want to permanently remove all records in the blacklist?')"/>
-      </td>
-    </tr>
-  </table>
-</form>
+
+<p class="text-muted" style="text-align: right">
+  <small><a href="?page=blacklist&truncate=lawsuits" onclick="return confirm('Are you sure you want to erase the Lawsuits DNC list?')">Click here to erase the Lawsuits DNC list</a></small><br/>
+  <small><a href="?page=blacklist&truncate=master" onclick="return confirm('Are you sure you want to erase the Master DNC list?')">Click here to erase the Master DNC list</a></small>
+</p>
+
+<? /*
+<p align="center">The blacklist contains <?=number_format($blacklistCount)?> records.</p>
+*/ ?>
+
 
 <? if(!empty($rows_count)): ?>
   <h2 align="center">File is imported! Now your blacklist contains <?=$rows_count?> records.</h2>
@@ -48,5 +61,6 @@
 <? endif; ?>
 
 <div style="display: none; text-align: center;" id="loader">
-  <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif" width="32" height="32" alt="loader" />
+  <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif" width="32" height="32" alt="loader" /><br/>
+  For very big files, this page might hang. You will get an email to <em><?=REPORTS_EMAIL_ADDRESS?></em> when processing of this file would have been finished
 </div>
