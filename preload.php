@@ -2,6 +2,8 @@
 
 include "config.php"; //load database settings, folders paths and such stuff
 
+require_once 'vendor/autoload.php';
+
 set_include_path( CLASSES_DIR );
 require "Quick_CSV_import.class.php";
 require "functions.php";
