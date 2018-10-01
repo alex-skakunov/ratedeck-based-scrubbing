@@ -1,2 +1,4 @@
 temp/csv/*
 temp/sessions/*
+vendor
+composer.lock
