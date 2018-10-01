@@ -12,7 +12,7 @@ if( !empty($_POST) ) //form was submitted
   {
 
     $temp_file = $_FILES['file_source']['tmp_name'];
-    $our_file  = TEMP_DIR . basename($temp_file);
+    $our_file  = tempnam(TEMP_DIR, 'ratedeck');
     if ( !move_uploaded_file( $temp_file, $our_file ) ) //copy to our folder
     {
       $error = 'Could not copy [' . $temp_file .'] to [' . $our_file . ']';
