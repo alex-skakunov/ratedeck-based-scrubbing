@@ -51,7 +51,7 @@
                 <div class="form-group row">
                     <label for="max_price" class="col-2 col-form-label">Max price:</label>
                     <div class="col col-10">
-                      <input type="text" name="max_price" id="max_price" class="form-control" pattern="[0-9\.]+" value="<?=$max_price?>" style="width: 10em">
+                      <input type="text" name="max_price" id="max_price" class="form-control" pattern="[0-9\.]+" value="" style="width: 10em">
                     </div>
                 </div>
 
@@ -60,13 +60,13 @@
                   <div class="col col-10" style="text-align: left;">
                       <div class="form-check">
                         <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" name="wireless" value="1" id="wireless" <?=!empty($wireless) ? 'checked="checked"' : ''?>> Wireless
+                          <input class="form-check-input" type="checkbox" name="wireless" value="1" id="wireless" checked="checked"> Wireless
                         </label>
                       </div>
 
                       <div class="form-check">
                         <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" name="landline" value="1" id="landline" <?=!empty($landline) ? 'checked="checked"' : ''?>> Landline
+                          <input class="form-check-input" type="checkbox" name="landline" value="1" id="landline" checked="checked"> Landline
                         </label>
                       </div>
                   </div>
@@ -89,7 +89,7 @@
                         ?>
                             <div class="form-check">
                               <label class="form-check-label">
-                                <input class="form-check-input" type="checkbox" name="areacode[]" value="<?=$token?>" id="<?=$token?>" <?=empty($areacodes) || !empty($areacodes[$token]) ? 'checked="checked"' : ''?> <?=!empty($areacodes_all) ? 'disabled="disabled"' : ''?>> <?=$areacode?>
+                                <input class="form-check-input" type="checkbox" name="areacode[]" value="<?=$token?>" id="<?=$token?>" checked="checked" disabled="disabled"> <?=$areacode?>
                               </label>
                             </div>
                         <?php
