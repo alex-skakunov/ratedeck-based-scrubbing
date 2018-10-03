@@ -51,8 +51,8 @@ $landline = !empty($item['include_landline_type']) ? 1 : 0;
 
 $sqlTemplate = 'SELECT number
         FROM scrub
-        INNER JOIN `ratedeck` ON SUBSTR(scrub.number, 1, 6) = ratedeck.NPANXX
-        WHERE ratedeck.Rate <= %f
+        INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`
+        WHERE ratedeck.`Rate` <= %f
           %s
         INTO OUTFILE "%s"';
 $typeCriteria = array();
@@ -67,13 +67,13 @@ $additionalCriteriaClause = !empty($typeCriteria)
   ? ' AND (' . implode(' OR ', $typeCriteria) . ')'
   : '';
 
-
+$blacklistsClause = '';
 if (!empty($item['include_lawsuits_dnc'])) {
-  $additionalCriteriaClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_lawsuits`)';
+  $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_lawsuits`)';
 }
 
 if (!empty($item['include_master_dnc'])) {
-  $additionalCriteriaClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_master`)';
+  $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_master`)';
 }
 
 
@@ -85,13 +85,48 @@ if (!empty($item['specific_states_list'])) {
 
 $filename = $item['id'] . '.csv';
 $fullname = TEMP_DIR . $filename;
-$sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause, $fullname);
-$res = $db->query($sql);
+$sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause . $blacklistsClause, $fullname);
+$db->query($sql);
 new dBug(nl2br($sql));
+
 $finalRowsCount = query('SELECT FOUND_ROWS()')->fetchColumn();
-new dBug($finalRowsCount);
+new dBug(nl2br($finalRowsCount));
 
 query('UPDATE `queue` SET `status`="success", final_rows_count=:final_rows_count, updated_at=NOW() WHERE id=:id', array(
     ':id' => $item['id'],
     ':final_rows_count' => $finalRowsCount
 ));
+
+
+// export items matched the blacklists
+if (!empty($item['is_blacklisted_report_required'])) {
+  $blacklistsReport = array();
+
+  foreach (array('lawsuits', 'master') as $blacklistName) {
+      if (empty($item['include_' . $blacklistName . '_dnc'])) {
+          new dBug(array('error' => 'Skipping'));
+          continue;
+      }
+      $fullname = TEMP_DIR . $item['id'] . "_$blacklistName.csv";
+      $sqlTemplate = 'SELECT number
+          FROM scrub
+          INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`
+          INNER JOIN `blacklist_' . $blacklistName . '` USING(`number`)
+          WHERE ratedeck.`Rate` <= %f
+            %s
+          INTO OUTFILE "%s"';
+      $sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause, $fullname);
+      $db->query($sql);
+      new dBug(nl2br($sql));
+
+      $rowsCount = query('SELECT FOUND_ROWS()')->fetchColumn();
+      query('UPDATE `queue` SET blacklist_'.$blacklistName.'_rows_count=:rows_count, updated_at=NOW() WHERE id=:id', array(
+          ':id' => $item['id'],
+          ':rows_count' => $rowsCount
+      ));
+    }
+
+}
+
+
+

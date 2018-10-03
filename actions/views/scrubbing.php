@@ -117,6 +117,16 @@
                   </div>
                 </div>
 
+                <div class="form-group row">
+                    <div class="col-2"></div>
+                    <div class="col col-10" style="text-align: left;">
+                        <label for="is_blacklisted_report_required">
+                          <input type="checkbox" name="is_blacklisted_report_required" id="is_blacklisted_report_required" value="1" /> Export DNC records matched
+                        </label>
+                    </div>
+                </div>
+
+
           </form>
 
       </div>
@@ -209,7 +219,7 @@ function toggleStatesSelector() {
                   }
             ?>
           </td>
-          <td>
+          <td align="left">
             <?
             switch ($row['status']) {
                 case 'success':
@@ -217,11 +227,27 @@ function toggleStatesSelector() {
                       $url = 'temp/csv/'. $row['id'] . '.csv';
                       echo '<a href="'.$url.'">Download CSV</a>';
                       if (!empty($row['final_rows_count'])) {
-                        echo '<br/><small class="text-muted">(' . number_format($row['final_rows_count']) . ' rows)</small>';
+                        echo ' <small class="text-muted">(' . number_format($row['final_rows_count']) . ' rows)</small>';
                       }
                     }
                     else {
                         echo '<small class="text-muted">Empty result.</small>';
+                    }
+
+                    if (!empty($row['is_blacklisted_report_required'])) {
+                      foreach (array('lawsuits', 'master') as $blacklistName) {
+                          if (empty($row['include_' . $blacklistName . '_dnc'])) {
+                              continue;
+                          }
+                          $url = 'temp/csv/'. $row['id'] . "_$blacklistName.csv";
+                          echo '<br/><small>' . ucfirst($blacklistName) . ' DNC: </small>';
+                          if (!empty($row['blacklist_'.$blacklistName.'_rows_count'])) {
+                            echo ' <a href="'.$url.'"><small>Download</small></a> <small class="text-muted">(' . number_format($row['blacklist_'.$blacklistName.'_rows_count']) . ' rows)</small>';
+                          }
+                          else {
+                            echo '<small class="text-muted">Empty.</small>';
+                          }
+                      }
                     }
                     break;
 
