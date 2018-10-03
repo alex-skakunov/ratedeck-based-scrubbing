@@ -241,11 +241,15 @@ function toggleStatesSelector() {
                           }
                           $url = 'temp/csv/'. $row['id'] . "_$blacklistName.csv";
                           echo '<br/><small>' . ucfirst($blacklistName) . ' DNC: </small>';
-                          if (!empty($row['blacklist_'.$blacklistName.'_rows_count'])) {
-                            echo ' <a href="'.$url.'"><small>Download</small></a> <small class="text-muted">(' . number_format($row['blacklist_'.$blacklistName.'_rows_count']) . ' rows)</small>';
-                          }
-                          else {
-                            echo '<small class="text-muted">Empty.</small>';
+                          switch($row['blacklist_'.$blacklistName.'_rows_count']) {
+                            case null:
+                              echo '<small class="text-muted">Calculating...</small>';
+                              break;
+                            case 0:
+                              echo '<small class="text-muted">Empty.</small>';
+                              break;
+                            default:
+                              echo ' <a href="'.$url.'"><small>Download</small></a> <small class="text-muted">(' . number_format($row['blacklist_'.$blacklistName.'_rows_count']) . ' rows)</small>';
                           }
                       }
                     }

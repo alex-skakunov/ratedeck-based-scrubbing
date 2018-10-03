@@ -92,41 +92,46 @@ new dBug(nl2br($sql));
 $finalRowsCount = query('SELECT FOUND_ROWS()')->fetchColumn();
 new dBug(nl2br($finalRowsCount));
 
+// now the file
 query('UPDATE `queue` SET `status`="success", final_rows_count=:final_rows_count, updated_at=NOW() WHERE id=:id', array(
     ':id' => $item['id'],
     ':final_rows_count' => $finalRowsCount
 ));
 
 
-// export items matched the blacklists
-if (!empty($item['is_blacklisted_report_required'])) {
-  $blacklistsReport = array();
+try {
+  // export items matched the blacklists
+  if (!empty($item['is_blacklisted_report_required'])) {
+    $blacklistsReport = array();
 
-  foreach (array('lawsuits', 'master') as $blacklistName) {
-      if (empty($item['include_' . $blacklistName . '_dnc'])) {
-          new dBug(array('error' => 'Skipping'));
-          continue;
+    foreach (array('lawsuits', 'master') as $blacklistName) {
+        sleep(10);
+        if (empty($item['include_' . $blacklistName . '_dnc'])) {
+            new dBug(array('error' => 'Skipping'));
+            continue;
+        }
+        $fullname = TEMP_DIR . $item['id'] . "_$blacklistName.csv";
+        $sqlTemplate = 'SELECT number
+            FROM scrub
+            INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`
+            INNER JOIN `blacklist_' . $blacklistName . '` USING(`number`)
+            WHERE ratedeck.`Rate` <= %f
+              %s
+            INTO OUTFILE "%s"';
+        $sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause, $fullname);
+        $db->query($sql);
+        new dBug(nl2br($sql));
+
+        $rowsCount = query('SELECT FOUND_ROWS()')->fetchColumn();
+        query('UPDATE `queue` SET blacklist_'.$blacklistName.'_rows_count=:rows_count, updated_at=NOW() WHERE id=:id', array(
+            ':id' => $item['id'],
+            ':rows_count' => $rowsCount
+        ));
       }
-      $fullname = TEMP_DIR . $item['id'] . "_$blacklistName.csv";
-      $sqlTemplate = 'SELECT number
-          FROM scrub
-          INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`
-          INNER JOIN `blacklist_' . $blacklistName . '` USING(`number`)
-          WHERE ratedeck.`Rate` <= %f
-            %s
-          INTO OUTFILE "%s"';
-      $sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause, $fullname);
-      $db->query($sql);
-      new dBug(nl2br($sql));
-
-      $rowsCount = query('SELECT FOUND_ROWS()')->fetchColumn();
-      query('UPDATE `queue` SET blacklist_'.$blacklistName.'_rows_count=:rows_count, updated_at=NOW() WHERE id=:id', array(
-          ':id' => $item['id'],
-          ':rows_count' => $rowsCount
-      ));
-    }
-
+  }
 }
-
-
+catch(Exception $e) {
+  $errorMessage = $e->getMessage();
+  error_log('Exception: ' . $e->getMessage());
+}
 
