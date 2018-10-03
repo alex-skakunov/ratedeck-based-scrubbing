@@ -94,6 +94,6 @@ sendEmail('Blacklist upload is done: ' . $_FILES['file_source']['name'],
         ?  'The ' . ucfirst($blacklistType) . ' DNC list was uploaded successfully.'
         : 'There was a problem with the upload: ' . $errorMessage
     ) .
-    '\n The file size: '
+    '<br/><br/> The file size: '
     . number_format($_FILES['file_source']['size']) . ' bytes'
 );
