@@ -11,6 +11,9 @@
   </h1>
 </div>
 
+<? if(!empty($errorMessage)): new dBug($errorMessage);?>
+<? endif;?>
+
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Queue a new file</button><br/><br/>
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog">
@@ -58,12 +61,12 @@
                 <div class="form-group row">
                     <label class="col-2 col-form-label">DNC:</label>
                     <div class="col col-10" style="text-align: left;">
-                      <label for="lawsuits_dnc">
-                        <input type="radio" name="blacklist_type" id="lawsuits_dnc" value="lawsuits" checked="checked" /> Lawsuits DNC
-                      </label><br/>
-                      <label for="master_dnc">
-                        <input type="radio" name="blacklist_type" id="master_dnc" value="master"/> Master DNC
-                      </label>
+                        <label for="lawsuits_dnc">
+                          <input type="checkbox" name="include_lawsuits_dnc" id="lawsuits_dnc" value="1" checked="checked" /> Lawsuits DNC
+                        </label><br/>
+                        <label for="master_dnc">
+                          <input type="checkbox" name="include_master_dnc" id="master_dnc" value="1"/> Master DNC
+                        </label>
                     </div>
                 </div>
 
@@ -163,7 +166,16 @@ function toggleStatesSelector() {
               <? endif; ?>
           </td>
           <td><?=$row['max_price']?></td>
-          <td><small><?=ucfirst($row['blacklist_type'])?></small></td>
+          <td><small><?
+          $list = [];
+          if (!empty($row['include_lawsuits_dnc'])) {
+            $list[] = 'Lawsuits';
+          }
+          if (!empty($row['include_master_dnc'])) {
+            $list[] = 'Master';
+          }
+          echo !empty($list) ? implode(', ', $list) : '—';
+          ?></small></td>
           <td><?
             $list = array();
             if(!empty($row['include_wireless_type'])) {

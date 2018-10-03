@@ -54,7 +54,6 @@ $sqlTemplate = 'SELECT number
         INNER JOIN `ratedeck` ON SUBSTR(scrub.number, 1, 6) = ratedeck.NPANXX
         WHERE ratedeck.Rate <= %f
           %s
-          AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_'.$item['blacklist_type'].'`)
         INTO OUTFILE "%s"';
 $typeCriteria = array();
 if (!empty($wireless)) {
@@ -65,22 +64,32 @@ if (!empty($landline)) {
 }
 
 $additionalCriteriaClause = !empty($typeCriteria)
-  ? 'AND (' . implode(' OR ', $typeCriteria) . ')'
+  ? ' AND (' . implode(' OR ', $typeCriteria) . ')'
   : '';
+
+
+if (!empty($item['include_lawsuits_dnc'])) {
+  $additionalCriteriaClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_lawsuits`)';
+}
+
+if (!empty($item['include_master_dnc'])) {
+  $additionalCriteriaClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_master`)';
+}
+
 
 if (!empty($item['specific_states_list'])) {
   $statesArray = explode(',', $item['specific_states_list']);
   $statesListAsString = '"' . implode('", "', $statesArray) . '"';
-  $additionalCriteriaClause .= sprintf(' AND SUBSTR(scrub.`number`, 1, 3) IN (SELECT `code` FROM `areacode` WHERE REPLACE(LCASE(`region`), " ", "_") IN (%s))', $statesListAsString);
+  $additionalCriteriaClause .= chr(10) . sprintf(' AND SUBSTR(scrub.`number`, 1, 3) IN (SELECT `code` FROM `areacode` WHERE REPLACE(LCASE(`region`), " ", "_") IN (%s))', $statesListAsString);
 }
 
 $filename = $item['id'] . '.csv';
 $fullname = TEMP_DIR . $filename;
 $sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause, $fullname);
 $res = $db->query($sql);
-new dBug($sql);
+new dBug(nl2br($sql));
 $finalRowsCount = query('SELECT FOUND_ROWS()')->fetchColumn();
-new dBug($finalRowsCount );
+new dBug($finalRowsCount);
 
 query('UPDATE `queue` SET `status`="success", final_rows_count=:final_rows_count, updated_at=NOW() WHERE id=:id', array(
     ':id' => $item['id'],

@@ -43,11 +43,6 @@ if (!empty($_POST['areacode'])) {
   }
 }
 
-$blacklistType = strtolower(trim($_POST['blacklist_type']));
-if (!in_array($blacklistType, array('lawsuits', 'master'))) {
-    return $message = 'Please choose a DNC list to upload to';
-}
-
 $isTheOnlyFile = sizeof($_FILES['file_source']['name']) == 1;
 
 foreach ($_FILES['file_source']['name'] as $index => $filename) {
@@ -58,17 +53,16 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
 
     if (!$isTheOnlyFile && UPLOAD_ERR_OK != $errorCode) {
         $errorMessage = $uploadErrors[$errorCode];
-        query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `blacklist_type`, `status`, `error_message`, `created_at`) VALUES (
-            :original_filename,
-            :temp_filename,
-            :max_price,
-            :include_wireless_type,
-            :include_landline_type,
-            :specific_states_list,
-            :blacklist_type,
-            "error",
-            :error_message,
-            NOW()
+        query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `status`, `error_message`, `created_at`) VALUES (
+                :original_filename,
+                :temp_filename,
+                :max_price,
+                :include_wireless_type,
+                :include_landline_type,
+                :specific_states_list,
+                "error",
+                :error_message,
+                NOW()
         )', array(
             ':original_filename' => $filename,
             ':temp_filename' => $_FILES['file_source']['tmp_name'][$index],
@@ -78,7 +72,6 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
             ':specific_states_list' => !empty($areacodes) 
               ? implode(',', $areacodes)
               : null,
-            ':blacklist_type' => $blacklistType,
             ':error_message' => $errorMessage
         ));
         continue;
@@ -88,7 +81,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
     if (is_uploaded_file($temp_file)) {
         $our_file  = tempnam(TEMP_DIR, 'scrub');
         if ( !move_uploaded_file( $temp_file, $our_file ) ) {
-          $error = 'Could not copy [' . $temp_file .'] to [' . $our_file . ']';
+          $errorMessage = 'Could not copy [' . $temp_file .'] to [' . $our_file . ']';
           return;
         }
 
@@ -106,7 +99,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
     } elseif (!empty($theLastQueuedItem)) {
         $originalFilename = $theLastQueuedItem['filename'];
     } else {
-      throw new Exception("No file was uploaded");
+      return $errorMessage = "No file was uploaded";
     }
 
     if (!empty($our_file)) {
@@ -117,16 +110,19 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
 
     $rows_count = !empty($theLastQueuedItem) ? $theLastQueuedItem['rows_count'] : null;
 
-    query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `blacklist_type`, `rows_count`, `created_at`) VALUES (
-        :original_filename,
-        :temp_filename,
-        :max_price,
-        :include_wireless_type,
-        :include_landline_type,
-        :specific_states_list,
-        :blacklist_type,
-        :rows_count,
-        NOW()
+    query('INSERT INTO `queue`(`filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`,
+        `specific_states_list`, `include_lawsuits_dnc`, `include_master_dnc`,
+        `rows_count`, `created_at`) VALUES (
+            :original_filename,
+            :temp_filename,
+            :max_price,
+            :include_wireless_type,
+            :include_landline_type,
+            :specific_states_list,
+            :include_lawsuits_dnc,
+            :include_master_dnc,
+            :rows_count,
+            NOW()
     )', array(
         ':original_filename' => $originalFilename,
         ':temp_filename' => $temporaryFilename,
@@ -136,10 +132,10 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
         ':specific_states_list' => !empty($areacodes) 
           ? implode(',', $areacodes)
           : null,
-        ':blacklist_type' => $blacklistType,      
+        ':include_lawsuits_dnc' => !empty($_POST['include_lawsuits_dnc']) ? 1 : 0,
+        ':include_master_dnc' => !empty($_POST['include_master_dnc']) ? 1 : 0,
         ':rows_count' => $rows_count
     ));
 }
 
-$recordset = query('SELECT * FROM `queue` ORDER BY `id` DESC')->fetchAll(PDO::FETCH_ASSOC); //refetch the fresh copy
-$theLastQueuedItem = query('SELECT * FROM `queue` WHERE `filename` <> "" AND `filename` IS NOT NULL ORDER BY `id` DESC LIMIT 1')->fetch(PDO::FETCH_ASSOC);
+header('Location: ?page=scrubbing');
