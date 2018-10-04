@@ -1,7 +1,13 @@
 <?php
-
+$templatesHashedList = array();
+foreach($templates as $template) {
+    $templatesHashedList[$template['id']] = json_decode($template['settings'], 1);
+}
 
 ?>
+<script>
+var templatesData = <?=json_encode($templatesHashedList);?>;
+</script>
 <!--
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js"></script>
 -->
@@ -18,12 +24,31 @@
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog">
   <div class="modal-dialog modal-dialog-centered" role="document">
+
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title">Queue a new file</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
+        <div class="col col-5">
+          <h5 class="modal-title">Queue a new file</h5>
+        </div>
+        <div class="col col-5">
+           <select name="template" style="width: 13em">
+               <optgroup>
+                   <option value="0" selected>- choose or save client -</option>
+                   <option value="">Save as new...</option>
+               </optgroup>
+               <? if (!empty($templates)) : ?>
+                   <? foreach ($templates as $template) : ?>
+                   <option value="<?=$template['id']?>"><?=$template['title']?></option>
+                   <? endforeach; ?>
+               <? endif; ?>
+           </select>
+           <a href="#" id="delete_client" style="display: none;" onclick="deleteClient();"><small>Delete this client</small></a>
+        </div>
+        <div class="col col-2">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
       </div>
       <div class="modal-body">
 
@@ -93,7 +118,7 @@
 
                       <div class="form-check">
                         <label class="form-check-label">
-                          <input class="form-check-input" type="checkbox" name="areacodes_all" value="1" id="areacodes_all" <?=!empty($areacodes_all) ? 'checked="checked"' : ''?> onclick="toggleStatesSelector()"> Include all
+                          <input class="form-check-input" type="checkbox" name="areacodes_all" value="1" id="areacodes_all" <?=!empty($areacodes_all) ? 'checked="checked"' : ''?> > Include all
                         </label>
                       </div>
 
@@ -112,8 +137,8 @@
                         ?>
                         </div>
 
-                    <a href="#" onclick="$('div#states_list input').each(function() {$(this).attr('checked', 'checked');}); return false;"><small>select all</small></a> /
-                    <a href="#" onclick="$('div#states_list input').each(function() {$(this).removeAttr('checked');}); return false;"><small>select none</small></a>
+                    <a href="#" onclick="$('div#states_list input').each(function() {$(this).prop('checked', 1); $('form').attr('dirty', 1);}); return false;"><small>select all</small></a> /
+                    <a href="#" onclick="$('div#states_list input').each(function() {$(this).prop('checked', 0); $('form').attr('dirty', 1);}); return false;"><small>select none</small></a>
                   </div>
                 </div>
 
@@ -138,7 +163,8 @@
 </div>
 
 <script type="text/javascript">
-function toggleStatesSelector() {
+$('#areacodes_all').click(syncAllStatesSelector);
+function syncAllStatesSelector() {
   var selected = $('#areacodes_all').prop('checked');
   $('div#states_list input').each(function() {
     selected ? $(this).attr('disabled', 'disabled') : $(this).removeAttr('disabled');
@@ -146,6 +172,143 @@ function toggleStatesSelector() {
   $('div#states_list label').each(function() {
     selected ? $(this).addClass('disabled') : $(this).removeClass('disabled');
   })
+}
+
+$('input[type=text], input[type=checkbox], input[type=radio]').change(function(){
+    var id = $('select').val();
+    if (0 == id || '' == id) {
+        return;
+    }
+
+    $('form').attr('dirty', '1');
+});
+
+setInterval(function() {
+    var id = $('select').val();
+    if (0 == id || "" == id) {
+        return;
+    }
+
+    if (1 != $('form').attr('dirty')) {
+        return;
+    }
+    var list = collectFormData();
+    
+    $('form').removeAttr('dirty');
+    templatesData[id] = list;
+    $.post('index.php', {
+      page: 'template',
+      method: 'update',
+      fields: list,
+      id: id
+    }); 
+}, 1000);
+
+function collectFormData() {
+    var list = {};
+    var elements = $('input[type=text], input[type=checkbox]');
+    if (!elements.length) {
+        return;
+    }
+
+    for(var i = 0; i < elements.length; i++) {
+        var elem = $(elements[i]);
+        if ('checkbox' == elem.attr('type')) {
+            list[elem.attr('id')] = elem.prop('checked') ? 1 : 0;
+        }
+        else {
+            list[elem.attr('id')] = elem.val();
+        }
+    }
+    return list;
+}
+
+function showSaveClientDialog() {
+    var title = prompt('Enter a new client title');
+    if (!title) {
+        return;
+    }
+    var list = collectFormData();
+    $.post('index.php', {
+        page: 'template',
+        method: 'create',
+        fields: list,
+        title: title
+      },
+      function(data) {
+          if(!data.id) {
+               return alert('Could not save the client');
+         }
+         templatesData[data.id] = list;
+         $('select').append($("<option></option>")
+                    .attr("value", data.id)
+                    .text(title));
+         $('select').val(data.id);
+      }
+    );
+}
+
+function deleteClient() {
+    var id = $('select').val();
+    if (!id) {
+        return;
+    }
+
+    if (!confirm('Are you sure you want to delete this client?')) {
+        return;
+    }
+
+    $.post('index.php', {
+      page: 'template',
+      method: 'delete',
+      id: id
+    });
+
+    $('select option[value="' + id + '"]').remove();
+    $('select').val(0);
+    $('#delete_client').hide();
+}
+
+$('select').change(function() {
+  $('#delete_client').hide();
+  var id = $(this).val();
+  if ("0" === id) {
+    return;
+  }
+
+  if ("" === id) {
+    return showSaveClientDialog();
+  }
+
+  if (!templatesData[id]) {
+    return;
+  }
+  applySettings(templatesData[id]);
+  syncAllStatesSelector();
+  $('#delete_client').show();
+});
+
+function applySettings(settings) {
+  for(var id in settings) {
+    var value = settings[id];
+    var elem = $('#' + id);
+    if (!elem.length) {
+      continue;
+    }
+
+    switch (elem.attr('type')) {
+        case 'checkbox':
+            if (!parseInt(value)) {
+                elem.prop('checked', 0);
+            }
+            else {
+                elem.prop('checked', 1);
+            }
+            break;
+        default:
+            elem.val(value);
+    }
+  }
 }
 </script>
 

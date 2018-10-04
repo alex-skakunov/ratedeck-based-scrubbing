@@ -31,6 +31,9 @@ foreach($_areacodeList as $areacode) {
   $areacodeList[$token] = $areacode['region'];
 }
 
+$templates = query('SELECT * FROM `template`')->fetchAll(PDO::FETCH_ASSOC);
+
+
 
 if(empty($_POST)) {
   return;
