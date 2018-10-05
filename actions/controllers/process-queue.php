@@ -68,14 +68,11 @@ $additionalCriteriaClause = !empty($typeCriteria)
   : '';
 
 $blacklistsClause = '';
-if (!empty($item['include_lawsuits_dnc'])) {
-  $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_lawsuits`)';
+foreach($blacklistsList as $token) {
+    if (!empty($item['include_' . $token . '_dnc'])) {
+        $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_' . $token . '`)';
+    }
 }
-
-if (!empty($item['include_master_dnc'])) {
-  $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_master`)';
-}
-
 
 if (!empty($item['specific_states_list'])) {
   $statesArray = explode(',', $item['specific_states_list']);
@@ -104,8 +101,7 @@ try {
   if (!empty($item['is_blacklisted_report_required'])) {
     $blacklistsReport = array();
 
-    foreach (array('lawsuits', 'master') as $blacklistName) {
-        sleep(10);
+    foreach ($blacklistsList as $blacklistName) {
         if (empty($item['include_' . $blacklistName . '_dnc'])) {
             new dBug(array('error' => 'Skipping'));
             continue;

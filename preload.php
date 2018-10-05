@@ -36,6 +36,12 @@ if(empty($db))
   exit("Cannot connect to database");
 }
 
+
+$blacklistsList = array(
+    'lawsuits',
+    'master',
+    'third'
+);
 if( !ini_get("file_uploads") ) //check whether administrator must tune PHP
 {
   exit ( "PHP directive [file_uploads] must be turned ON" );

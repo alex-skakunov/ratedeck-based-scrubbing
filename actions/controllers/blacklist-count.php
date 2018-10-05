@@ -4,7 +4,7 @@ if (empty($_GET)) return;
 
 $name = strtolower(trim($_GET['name']));
 
-if (!in_array($name, array('lawsuits', 'master'))) return;
+if (!in_array($name, $blacklistsList)) return;
 
 $count = query('SELECT COUNT(*) FROM blacklist_' . $name)->fetchColumn();
 

@@ -86,12 +86,11 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
                 <div class="form-group row">
                     <label class="col-2 col-form-label">DNC:</label>
                     <div class="col col-10" style="text-align: left;">
-                        <label for="lawsuits_dnc">
-                          <input type="checkbox" name="include_lawsuits_dnc" id="lawsuits_dnc" value="1" checked="checked" /> Lawsuits DNC
-                        </label><br/>
-                        <label for="master_dnc">
-                          <input type="checkbox" name="include_master_dnc" id="master_dnc" value="1"/> Master DNC
-                        </label>
+                        <? foreach($blacklistsList as $token) : ?>
+                            <label for="<?=$token?>_dnc">
+                                <input type="checkbox" name="include_<?=$token?>_dnc" id="<?=$token?>_dnc" value="1" checked="checked" /> <?=ucfirst($token)?> DNC
+                            </label><br/>
+                        <? endforeach; ?>
                     </div>
                 </div>
 
@@ -341,11 +340,10 @@ function applySettings(settings) {
           <td><?=$row['max_price']?></td>
           <td><small><?
           $list = [];
-          if (!empty($row['include_lawsuits_dnc'])) {
-            $list[] = 'Lawsuits';
-          }
-          if (!empty($row['include_master_dnc'])) {
-            $list[] = 'Master';
+          foreach($blacklistsList as $token) {
+              if (!empty($row['include_' . $token . '_dnc'])) {
+                  $list[] = ucfirst($token);
+              }
           }
           echo !empty($list) ? implode(', ', $list) : '—';
           ?></small></td>
@@ -398,7 +396,7 @@ function applySettings(settings) {
                     }
 
                     if (!empty($row['is_blacklisted_report_required'])) {
-                      foreach (array('lawsuits', 'master') as $blacklistName) {
+                      foreach ($blacklistsList as $blacklistName) {
                           if (empty($row['include_' . $blacklistName . '_dnc'])) {
                               continue;
                           }

@@ -2,20 +2,8 @@
 
 if (!empty($_GET['truncate'])) {
     $token = strtolower(trim($_GET['truncate']));
-    switch($token) {
-        case 'lawsuits':
-            $tableNameToTruncate = 'blacklist_lawsuits';
-            break;
-        case 'master':
-            $tableNameToTruncate = 'blacklist_master';
-            break;
-        default:
-            $tableNameToTruncate = null;
-            break;
-    }
-    
-    if (!empty($tableNameToTruncate)) {
-        query('TRUNCATE TABLE ' . $tableNameToTruncate);
+    if (in_array($token, $blacklistsList)) {
+        query('TRUNCATE TABLE blacklist_' . $token);
     }
     header('Location: ?page=blacklist&table_erased=' . $token);
     exit;
@@ -25,7 +13,6 @@ if (!empty($_GET['table_erased'])) {
     $message = ucfirst($_GET['table_erased']) . ' DNC list was erased';
 }
 
-// $blacklistCount = (int)query('SELECT COUNT(*) FROM `blacklist`')->fetchColumn(); // takes more than a minute on 250 mln table
 $rows_count = 0;
 
 if (empty($_POST)) {
@@ -33,7 +20,7 @@ if (empty($_POST)) {
 }
 
 $blacklistType = strtolower(trim($_POST['blacklist_type']));
-if (!in_array($blacklistType, array('lawsuits', 'master'))) {
+if (!in_array($blacklistType, $blacklistsList)) {
     return $message = 'Please choose a DNC list to upload to';
 }
 

@@ -20,14 +20,15 @@
       <td align="right"><b>Type:</b></td>
       <td rowspan="2" width="20px">&nbsp;</td>
       <td style="text-align: left; margin-left: 30px;">
-          <label for="lawsuits_dnc">
-            <input type="radio" name="blacklist_type" id="lawsuits_dnc" value="lawsuits" checked="checked" /> Lawsuits DNC
-            <small class="text-muted"> (Count: <span id="lawsuits_count">Loading...</span>)</small>
-          </label><br/>
-          <label for="master_dnc">
-            <input type="radio" name="blacklist_type" id="master_dnc" value="master"/> Master DNC
-            <small class="text-muted"> (Count: <span id="master_count">Loading...</span>)</small>
-          </label>
+          <? foreach($blacklistsList as $token) : ?>
+              <label for="<?=$token?>_dnc">
+                  <input type="radio" name="blacklist_type" id="<?=$token?>_dnc" value="<?=$token?>" /> <?=ucfirst($token)?> DNC
+                  <small class="text-muted"> (Count: <span id="<?=$token?>_count">Loading...</span>)</small>
+              </label><br/>
+              <script>
+                  $.getJSON('index.php?page=blacklist-count&name=<?=$token?>', function(data) {$('#<?=$token?>_count').html(data.count);});
+              </script>
+          <? endforeach; ?>
       </td>
     </tr>
     <tr>
@@ -44,14 +45,10 @@
 
 
 <p class="text-muted" style="text-align: right">
-  <small><a href="?page=blacklist&truncate=lawsuits" onclick="return confirm('Are you sure you want to erase the Lawsuits DNC list?')">Click here to erase the Lawsuits DNC list</a></small><br/>
-  <small><a href="?page=blacklist&truncate=master" onclick="return confirm('Are you sure you want to erase the Master DNC list?')">Click here to erase the Master DNC list</a></small>
+    <? foreach($blacklistsList as $token) : ?>
+        <small><a href="?page=blacklist&truncate=<?=$token?>" onclick="return confirm('Are you sure you want to erase the <?=ucfirst($token)?> DNC list?')">Click here to erase the <?=ucfirst($token)?> DNC list</a></small><br/>
+    <? endforeach; ?>
 </p>
-
-<? /*
-<p align="center">The blacklist contains <?=number_format($blacklistCount)?> records.</p>
-*/ ?>
-
 
 <? if(!empty($rows_count)): ?>
   <h2 align="center">File is imported! Now your blacklist contains <?=$rows_count?> records.</h2>
@@ -66,8 +63,3 @@
   <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif" width="32" height="32" alt="loader" /><br/>
   For very big files, this page might hang. You will get an email to <em><?=REPORTS_EMAIL_ADDRESS?></em> when processing of this file would have been finished
 </div>
-
-<script>
-$.getJSON('index.php?page=blacklist-count&name=lawsuits', function(data) {$('#lawsuits_count').html(data.count);});
-$.getJSON('index.php?page=blacklist-count&name=master', function(data) {$('#master_count').html(data.count);});
-</script>
