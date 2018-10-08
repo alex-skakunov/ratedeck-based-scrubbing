@@ -40,7 +40,7 @@ if(empty($db))
 $blacklistsList = array(
     'lawsuits',
     'master',
-    'third'
+    'customer_er'
 );
 if( !ini_get("file_uploads") ) //check whether administrator must tune PHP
 {
