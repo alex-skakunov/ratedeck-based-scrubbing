@@ -79,18 +79,23 @@
 
           <?
             $itemsList = array(
-              'ratedeck' => 'ratedeck',
+              'ratedeck'  => 'ratedeck',
               'blacklist' => 'DNC list',
-              'scrubbing' => 'scrubbing'
+              'scrubbing' => 'scrubbing',
+              'settings'  => 'settings'
             );
             foreach ($itemsList as $item => $title) {
               echo '<li class="nav-item ', (CURRENT_ACTION == $item ? 'active' : ''), '">';
-              echo '<a  class="nav-link" href="/csv/?page=' . $item . '">' . ucfirst($title) . '</a>';
+              echo '<a class="nav-link" href="/csv/?page=' . $item . '">' . ucfirst($title) . '</a>';
               echo '</li>'; 
             }
           ?>
         </ul>
       </div>
+      <div  class="navbar-nav" style="float: right;">
+        <a class="nav-link" href="index.php?page=logout"><small>Logout</small></a>
+      </div>
+
     </nav>
 
     <main role="main" class="container">
