@@ -59,7 +59,10 @@ $fQuickCSV->table_exists = true;
 $fQuickCSV->truncate_table = !true;
 $fQuickCSV->fields_list = array('@area', '@number');
 $fQuickCSV->parameters = array(
-    'number' => 'CONCAT(@area, @number)'
+    // this implements support of both formats:
+    // 1. 1234567890 (just a number)
+    // 2. 123,4567890 (area code and the number)
+    'number' => 'CONCAT(@area, IFNULL(@number, ""))'
 );
 
 
@@ -70,7 +73,9 @@ try {
     if (!empty($fQuickCSV->error)) {
       throw new Exception($fQuickCSV->error);
     }
-    $message = 'The ' . ucfirst($blacklistType) . ' DNC list was uploaded successfully.';
+    $message = 'The ' . ucfirst($blacklistType) . ' DNC list was uploaded successfully ('
+        . $fQuickCSV->rows_count
+        .' records)';
 }
 catch(Exception $e) {
     $message = $errorMessage = $e->getMessage();
