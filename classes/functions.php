@@ -3,9 +3,12 @@ use Zend\Mail\Message;
 use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\SmtpOptions;
 
-function sendEmail($subject, $mess) {
+function sendEmail($subject, $mess, $to=null) {
+    if (empty($to)) {
+       $to = REPORTS_EMAIL_ADDRESS;
+    }
     $message = new Message();
-    $message->addTo(REPORTS_EMAIL_ADDRESS);
+    $message->addTo($to);
     $message->addFrom('Service Report <'.SMTP_USERNAME.'>');
     $message->setSubject($subject);
     $message->setBody($mess);
