@@ -82,16 +82,23 @@
               'ratedeck'  => 'ratedeck',
               'blacklist' => 'DNC list',
               'scrubbing' => 'scrubbing',
-              'settings'  => 'settings'
+              'settings'  => 'settings',
+              'users'     => 'users',
             );
             foreach ($itemsList as $item => $title) {
               echo '<li class="nav-item ', (CURRENT_ACTION == $item ? 'active' : ''), '">';
-              echo '<a class="nav-link" href="/csv/?page=' . $item . '">' . ucfirst($title) . '</a>';
+              echo '<a class="nav-link" href="/ratedeck-based-scrubbing/?page=' . $item . '">' . ucfirst($title) . '</a>';
               echo '</li>'; 
             }
           ?>
         </ul>
       </div>
+      
+      <span style="color: lightgray; margin-right: 50px">
+        <?=$_SESSION['user']['name']?>
+        <small>(<?=$_SESSION['user']['level']?>)</small>
+      </span>
+
       <div  class="navbar-nav" style="float: right;">
         <a class="nav-link" href="index.php?page=logout"><small>Logout</small></a>
       </div>
