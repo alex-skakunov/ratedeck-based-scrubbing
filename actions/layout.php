@@ -82,12 +82,15 @@
               'ratedeck'  => 'ratedeck',
               'blacklist' => 'DNC list',
               'scrubbing' => 'scrubbing',
-              'settings'  => 'settings',
-              'users'     => 'users',
             );
+
+            if ('admin' == $_SESSION['user']['level']) {
+              $itemsList['users'] = 'users';
+            }
+
             foreach ($itemsList as $item => $title) {
               echo '<li class="nav-item ', (CURRENT_ACTION == $item ? 'active' : ''), '">';
-              echo '<a class="nav-link" href="/ratedeck-based-scrubbing/?page=' . $item . '">' . ucfirst($title) . '</a>';
+              echo '<a class="nav-link" href="index.php?page=' . $item . '">' . ucfirst($title) . '</a>';
               echo '</li>'; 
             }
           ?>
@@ -95,7 +98,7 @@
       </div>
       
       <span style="color: lightgray; margin-right: 50px">
-        <?=$_SESSION['user']['name']?>
+        <a href="index.php?page=settings"><?=$_SESSION['user']['name']?></a>
         <small>(<?=$_SESSION['user']['level']?>)</small>
       </span>
 
@@ -108,14 +111,17 @@
     <main role="main" class="container">
 
       <div class="starter-template">
+        <? if (!empty($errorMessage)): ?>
+          <div class="alert alert-warning" role="alert">
+            <?=$errorMessage?>
+          </div>
+        <? endif; ?>
+
         [template]
       </div>
 
     </main><!-- /.container -->
     <footer>
-        <? if( !empty($error) ) : ?>
-        <hr/><b>Error</b>: [<span style="color: red"><?=var_dump($error)?></span>]
-        <? endif; ?>
     </footer>
 
 </body>

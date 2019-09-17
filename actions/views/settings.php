@@ -4,13 +4,6 @@
   </h1>
 </div>
 
-<? if (!empty($errorMessage)): ?>
-  <div class="alert alert-danger" role="alert">
-    <?=$errorMessage?>
-  </div>
-  <br/>
-<? endif; ?>
-
 <? if (!empty($message)): ?>
   <div class="alert alert-info" role="alert">
     <?=$message?>

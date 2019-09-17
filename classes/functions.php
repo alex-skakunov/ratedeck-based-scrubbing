@@ -161,6 +161,12 @@ function startsWith( $str, $token ) {
     return !strncasecmp($_str, $token, $tokenLen );
 }
 
+function check_admin_access() {
+  if ('admin' != $_SESSION['user']['level']) {
+    header('Location: index.php');
+    exit;
+  }
+}
 
 function query($sql, $replacements=null) {
     global $db;

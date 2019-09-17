@@ -29,11 +29,6 @@
   border-top-right-radius: 0;
 }
 </style>
-<? if (!empty($errorMessage)): ?>
-  <div class="alert alert-warning" role="alert">
-    <?=$errorMessage?>
-  </div>
-<? endif; ?>
 
 <form class="form-signin" action="index.php?page=login" method="POST">
   <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>

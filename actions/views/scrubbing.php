@@ -17,9 +17,6 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
   </h1>
 </div>
 
-<? if(!empty($errorMessage)): new dBug($errorMessage);?>
-<? endif;?>
-
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".bd-example-modal-lg">Queue a new file</button><br/><br/>
 
 <div class="modal fade bd-example-modal-lg" tabindex="-1" role="dialog">
