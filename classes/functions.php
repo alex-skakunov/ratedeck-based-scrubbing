@@ -1,17 +1,26 @@
 <?php
 use Zend\Mail\Message;
+use Zend\Mime\Part as MimePart;
+use Zend\Mime\Message as MimeMessage;
 use Zend\Mail\Transport\Smtp as SmtpTransport;
 use Zend\Mail\Transport\SmtpOptions;
 
-function sendEmail($subject, $mess, $to=null) {
+function sendEmail($subject, $mess, $to=null, $toName=null) {
     if (empty($to)) {
        $to = REPORTS_EMAIL_ADDRESS;
     }
+
+    $html = new MimePart($mess);
+    $html->type = "text/html";
+
+    $body = new MimeMessage();
+    $body->setParts(array($html));
+
     $message = new Message();
-    $message->addTo($to);
+    $message->addTo($to, $toName);
     $message->addFrom('Service Report <'.SMTP_USERNAME.'>');
     $message->setSubject($subject);
-    $message->setBody($mess);
+    $message->setBody($body);
 
     $transport = new SmtpTransport();
     $options   = new SmtpOptions([
