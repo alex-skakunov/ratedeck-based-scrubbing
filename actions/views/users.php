@@ -71,6 +71,7 @@
       <th scope="col">#</th>
       <th scope="col">Name</th>
       <th scope="col">Email address</th>
+      <th scope="col">Last login</th>
       <th scope="col">Is admin?</th>
       <th scope="col">Delete</th>
     </tr>
@@ -81,6 +82,7 @@
           <th scope="row"><?=$user['id']?></th>
           <td><?=$user['name']?></td>
           <td><?=$user['email']?></td>
+          <td><small class="text-muted"><?=!empty($user['last_login_at']) ? $user['last_login_at'] : '' ?></small></td>
           <td><?=$user['is_admin'] ? 'Yes' : '—'?></td>
           <td><a href="#" onclick="if (confirm('Are you sure this user should be deleted?')) {deleteUser(this, <?=$user['id']?>);} return false;">&times;</a></td>
         </tr>

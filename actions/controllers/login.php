@@ -37,4 +37,9 @@ $_SESSION['user']['id'] = $userRecord['id'];
 $_SESSION['user']['name'] = $userRecord['name'];
 $_SESSION['user']['level'] = !empty($userRecord['is_admin']) ? 'admin' : 'user';
 
+query(
+  'UPDATE `user` SET
+   `last_login_at` = NOW()
+   WHERE `id` = ' . $userRecord['id']);
+
 header('Location: index.php');
