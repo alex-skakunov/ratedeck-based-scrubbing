@@ -18,7 +18,7 @@ $email = strtolower(trim($_POST['email']));
 $password = strtolower(trim($_POST['password']));
 
 $userRecord = query(
-  'SELECT `name`, `is_admin`
+  'SELECT `id`, `name`, `is_admin`
    FROM `user`
    WHERE `email` = :email
      AND `password` = :pass',
@@ -33,6 +33,7 @@ if (empty($userRecord)) {
 }
 
 $_SESSION['authenticated'] = true;
+$_SESSION['user']['id'] = $userRecord['id'];
 $_SESSION['user']['name'] = $userRecord['name'];
 $_SESSION['user']['level'] = !empty($userRecord['is_admin']) ? 'admin' : 'user';
 
