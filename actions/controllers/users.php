@@ -16,7 +16,7 @@ if (!empty($_POST)) {
       $name = trim($_POST['name']);
       $password = trim($_POST['password']);
       query(
-        'INSERT INTO user VALUES (NULL, :email, :pass, :nome, :is_admin, :user_id, NOW())',
+        'INSERT INTO user VALUES (NULL, :email, :pass, :nome, NULL, :is_admin, :user_id, NOW(), NULL)',
         array(
           ':email'    => $emailAddress,
           ':pass'     => md5($password),

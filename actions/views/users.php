@@ -6,65 +6,11 @@
 
 <button type="button" class="btn btn-primary" data-toggle="modal" data-target=".add-user-modal-lg">Add a user</button><br/><br/>
 
-<div class="modal fade add-user-modal-lg" tabindex="-1" role="dialog">
-  <div class="modal-dialog modal-dialog-centered" role="document">
+<?
+include_once '_users_modal_new.php';
+include_once '_users_modal_max_price.php';
+?>
 
-    <div class="modal-content">
-      <div class="modal-header">
-        <div class="col col-5">
-          <h5 class="modal-title">Add a new user</h5>
-        </div>
-        <div class="col col-2">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-            <span aria-hidden="true">&times;</span>
-          </button>
-        </div>
-      </div>
-
-      <div class="modal-body">
-          <form method="post" id="form" enctype="multipart/form-data" onsubmit="$('#submit').attr('disabled', 'diabled'); $('#loader').show();">
-             <input type="hidden" name="version" value="1.0" />
-
-              <div class="form-group row">
-                  <label for="email" class="col-2 col-form-label">Email:</label><br/>
-                  <div class="col col-10">
-                    <input type="email" name="email" id="email" class="form-control" />
-                  </div>
-              </div>
-
-              <div class="form-group row">
-                  <label for="password" class="col-2 col-form-label">Password:</label>
-                  <div class="col col-10">
-                    <input type="text" name="password" id="password" class="form-control" pattern="[a-zA-Z0-9\_\.]+" value="" sstyle="width: 10em">
-                  </div>
-              </div>
-
-              <div class="form-group row">
-                  <label for="name" class="col-2 col-form-label">Name:</label>
-                  <div class="col col-10">
-                    <input type="text" name="name" id="name" class="form-control" value="" sstyle="width: 10em">
-                  </div>
-              </div>
-
-              <div class="form-group row">
-                <div class="col col-2"></div>
-                <div class="col col-10" style="text-align: left;">
-                    <div class="form-check">
-                      <label class="form-check-label">
-                        <input class="form-check-input" type="checkbox" name="is_admin" value="1" id="is_admin"> Is an admin?
-                      </label>
-                    </div>
-                </div>
-              </div>
-
-          </form>
-      </div>
-      <div class="modal-footer">
-        <button type="button" id="submit" name="Go" class="btn btn-primary" data-dismiss="modal" onclick="$('#form').submit();">Add the guy</button>
-      </div>
-    </div>
-  </div>
-</div>
 <table class="table table-striped">
   <thead class="thead-dark">
     <tr>
@@ -73,6 +19,7 @@
       <th scope="col">Email address</th>
       <th scope="col">Last login</th>
       <th scope="col">Is admin?</th>
+      <th scope="col">Max price</th>
       <th scope="col">Delete</th>
     </tr>
   </thead>
@@ -82,8 +29,15 @@
           <th scope="row"><?=$user['id']?></th>
           <td><?=$user['name']?></td>
           <td><?=$user['email']?></td>
-          <td><small class="text-muted"><?=!empty($user['last_login_at']) ? $user['last_login_at'] : '' ?></small></td>
-          <td><?=$user['is_admin'] ? 'Yes' : '—'?></td>
+          <td><small class="text-muted"><?=!empty($user['last_login_at']) ? $user['last_login_at'] : '<small class="text-muted">—</small>' ?></small></td>
+          <td><?=$user['is_admin'] ? 'Yes' : '<small class="text-muted">—</small>'?></td>
+          <td>
+            <small>
+              <a class="max_price" href="#" onclick="window.currentUserId = <?=$user['id']?>; return false;" data-toggle="modal" data-target=".max-price-modal-lg">
+                <?=!empty($user['max_price']) ? number_format($user['max_price'], 2) : 'Set'?><br/>
+              </a>
+            </small>
+          </td>
           <td><a href="#" onclick="if (confirm('Are you sure this user should be deleted?')) {deleteUser(this, <?=$user['id']?>);} return false;">&times;</a></td>
         </tr>
       <? endforeach; ?>
