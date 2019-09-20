@@ -7,7 +7,16 @@ if(empty($_REQUEST['page'])) {
 }
 $_REQUEST['page'] = strtolower(trim($_REQUEST['page']));
 
-if ($_REQUEST['page'] != 'login' && empty($_SESSION['authenticated'])) {
+if (empty($_SESSION['authenticated']) 
+        && !in_array(
+                $_REQUEST['page'],
+                array(
+                    'login',
+                    'user-forgot-password',
+                    'user-password-recovery'
+                )
+            )
+  ) {
     header('Location: index.php?page=login');
 }
 

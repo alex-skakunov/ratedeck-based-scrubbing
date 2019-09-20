@@ -18,13 +18,13 @@
 .form-signin .form-control:focus {
   z-index: 2;
 }
-.form-signin input[type="text"] {
-  margin-bottom: -1px;
+.form-signin input[type="email"] {
+  margin-bottom: 10px;
   border-bottom-right-radius: 0;
   border-bottom-left-radius: 0;
 }
 .form-signin input[type="password"] {
-  margin-bottom: 10px;
+  margin-bottom: 20px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
@@ -34,10 +34,16 @@
   <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
   
   <label for="inputEmail" class="sr-only">Email address</label>
-  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="email" value="<?=!empty($_POST['email']) ? $_POST['email'] : ''?>" required autofocus>
+  <input type="email" id="inputEmail" class="form-control" placeholder="Email address" name="email" value="<?=!empty($_REQUEST['email']) ? $_REQUEST['email'] : ''?>" required autofocus>
 
   <label for="inputPassword" class="sr-only">Password</label>
   <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" value="<?=!empty($_POST['password']) ? $_POST['password'] : ''?>" required>
 
+
   <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+  <br/><br/>
+  
+  <div style="text-align: right">
+    <a href="index.php?page=user-forgot-password&email=<?=!empty($_REQUEST['email']) ? urlencode($_REQUEST['email']) : ''?>"><small>Forgot password?</a></a>
+  </div>
 </form>

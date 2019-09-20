@@ -67,7 +67,7 @@
 </head>
 
 <body>
-
+    <? if (!empty($_SESSION['authenticated'])) : ?>
     <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
 
       <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
@@ -107,6 +107,7 @@
       </div>
 
     </nav>
+    <? endif; ?>
 
     <main role="main" class="container">
 

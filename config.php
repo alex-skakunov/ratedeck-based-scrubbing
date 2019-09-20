@@ -22,6 +22,8 @@ define("DB_PASSWORD", '');
 define("DB_NAME"    , 'ratedeck');
 define('DB_TABLE'   , 'ratedeck');
 
+define('SALT', 'some random data here');
+
 define('REPORTS_EMAIL_ADDRESS', 'USERNAME@gmail.com');
 define('SMTP_USERNAME', 'USERNAME@gmail.com');
 define('SMTP_PASSWORD', 'STMP PASSWORD');
