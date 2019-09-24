@@ -25,6 +25,8 @@ if (!empty($_POST)) {
           ':user_id'  => (int)$_SESSION['user']['id'],
         )
       );
+      $userId = $db->lastInsertId();
+      query("CREATE TABLE `blacklist_user_$userId` LIKE `blacklist_master`");
 
       $url = 'http://' . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'];
       sendEmail(
