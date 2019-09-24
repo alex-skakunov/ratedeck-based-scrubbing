@@ -26,7 +26,7 @@
                   <small class="text-muted"> (Count: <span id="<?=$token?>_count">Loading...</span>)</small>
               </label><br/>
               <script>
-                  $.getJSON('index.php?page=blacklist-count&name=<?=$token?>', function(data) {$('#<?=$token?>_count').html(data.count);});
+                  $.getJSON('index.php?page=blacklist-count&name=<?=$token?>', function(data) {$('#<?=$token?>_count').html('approx. ' + data.count);});
               </script>
           <? endforeach; ?>
       </td>

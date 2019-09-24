@@ -6,7 +6,7 @@ $name = strtolower(trim($_GET['name']));
 
 if (!in_array($name, $blacklistsList)) return;
 
-$count = query('SELECT COUNT(*) FROM blacklist_' . $name)->fetchColumn();
-
+$result = query('SHOW TABLE STATUS WHERE Name = "blacklist_' . $name . '"')->fetch();
+$count = $result['Rows'];
 header('Content-Type: application/json');
 exit(json_encode(array('count' => number_format($count))));
