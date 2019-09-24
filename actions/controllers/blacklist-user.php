@@ -1,7 +1,5 @@
 <?php
 
-$userId = $_SESSION['user']['id'];
-
 if (!empty($_GET['truncate'])) {
     query('TRUNCATE TABLE blacklist_user_' . $userId);
     header('Location: ?page=blacklist&table_erased=your');

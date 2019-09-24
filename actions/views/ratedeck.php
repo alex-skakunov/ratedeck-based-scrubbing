@@ -18,8 +18,24 @@
     <tr>
       <td colspan="3">&nbsp;</td>
     </tr>
+
     <tr>
-      <td colspan="3" align="center"><input id="submit" type="Submit" name="Go" value="Upload the ratedeck" class="btn" onclick="var s = document.getElementById('file_source'); if(null != s && '' == s.value) {alert('Define file name'); s.focus(); return false;} var s = document.getElementById('table'); if(null != s && 0 == s.selectedIndex) {alert('Define table name'); s.focus(); return false;}"></td>
+      <td colspan="2" ></td>
+      <td align="left">
+        <small>
+         Upload a CSV in the following format of each line:
+         <ul>
+            <li>NPANXX, Rate, Wireless, Landline</li>
+         </ul>
+        </small>
+      </td>
+    </tr>
+    
+    <tr>
+      <td colspan="3">&nbsp;</td>
+    </tr>
+    <tr>
+      <td colspan="3" align="center"><input id="submit" type="Submit" name="Go" value="Upload the ratedeck" class="btn btn-primary" onclick="var s = document.getElementById('file_source'); if(null != s && '' == s.value) {alert('Define file name'); s.focus(); return false;} var s = document.getElementById('table'); if(null != s && 0 == s.selectedIndex) {alert('Define table name'); s.focus(); return false;}"></td>
     </tr>
   </table>
 </form>

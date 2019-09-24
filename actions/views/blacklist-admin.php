@@ -17,6 +17,21 @@
       </td>
     </tr>
     <tr>
+      <td colspan="2" ></td>
+      <td align="left">
+        <small>
+         Upload a CSV in any of the following formats of each line:
+         <ul>
+            <li>Full number</li>
+            <li>Area code, Number</li>
+         </ul>
+        </small>
+        <hr/>
+
+      </td>
+    </tr>
+
+    <tr>
       <td align="right"><b>Type:</b></td>
       <td rowspan="2" width="20px">&nbsp;</td>
       <td style="text-align: left; margin-left: 30px;">
@@ -37,7 +52,7 @@
     </tr>
     <tr>
       <td colspan="3" align="center">
-        <input id="submit" type="Submit" name="Go" value="Add the numbers to blacklist!" class="btn" />
+        <input id="submit" type="Submit" name="Go" value="Add the numbers to blacklist!" class="btn btn-primary" />
       </td>
     </tr>
   </table>
@@ -54,12 +69,7 @@
   <h2 align="center">File is imported! Now your blacklist contains <?=$rows_count?> records.</h2>
 <? endif; ?>
 
-
-<? if(!empty($message)): ?>
-  <h2 align="center"><?=$message?></h2>
-<? endif; ?>
-
 <div style="display: none; text-align: center;" id="loader">
   <img src="https://upload.wikimedia.org/wikipedia/commons/d/de/Ajax-loader.gif" width="32" height="32" alt="loader" /><br/>
-  For very big files, this page might hang. You will get an email to <em><?=REPORTS_EMAIL_ADDRESS?></em> when processing of this file would have been finished
+  For very big files, this page might hang. You will get an email when processing of this file would have been finished
 </div>

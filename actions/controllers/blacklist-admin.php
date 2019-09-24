@@ -75,9 +75,7 @@ try {
     if (!empty($fQuickCSV->error)) {
       throw new Exception($fQuickCSV->error);
     }
-    $message = 'The ' . ucfirst($blacklistType) . ' DNC list was uploaded successfully ('
-        . $fQuickCSV->rows_count
-        .' records)';
+    $message = 'The ' . ucfirst($blacklistType) . ' DNC list was uploaded successfully';
 }
 catch(Exception $e) {
     return $message = $errorMessage = $e->getMessage();
