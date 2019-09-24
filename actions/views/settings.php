@@ -4,13 +4,6 @@
   </h1>
 </div>
 
-<? if (!empty($message)): ?>
-  <div class="alert alert-info" role="alert">
-    <?=$message?>
-  </div>
-  <br/>
-<? endif; ?>
-
 <form method="post" enctype="multipart/form-data" onsubmit="$('#loader').show();">
    <table border="0" align="center">
     <tr>

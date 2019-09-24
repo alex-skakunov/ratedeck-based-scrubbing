@@ -82,10 +82,12 @@
               'ratedeck'  => 'ratedeck',
               'blacklist' => 'DNC list',
               'scrubbing' => 'scrubbing',
+              'users' => 'users',
             );
 
-            if ('admin' == $_SESSION['user']['level']) {
-              $itemsList['users'] = 'users';
+            if ('admin' != $_SESSION['user']['level']) {
+              unset($itemsList['ratedeck']);
+              unset($itemsList['users']);
             }
 
             foreach ($itemsList as $item => $title) {
@@ -115,6 +117,12 @@
         <? if (!empty($errorMessage)): ?>
           <div class="alert alert-warning" role="alert">
             <?=$errorMessage?>
+          </div>
+        <? endif; ?>
+
+        <? if (!empty($message)): ?>
+          <div class="alert alert-info" role="alert">
+            <?=$message?>
           </div>
         <? endif; ?>
 

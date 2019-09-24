@@ -2,11 +2,9 @@
 
 if (empty($_GET)) return;
 
-$name = strtolower(trim($_GET['name']));
+$userId = $_SESSION['user']['id'];
 
-if (!in_array($name, $blacklistsList)) return;
-
-$result = query('SHOW TABLE STATUS WHERE Name = "blacklist_' . $name . '"')->fetch();
+$result = query('SHOW TABLE STATUS WHERE Name = "blacklist_user_' . $userId . '"')->fetch();
 $count = $result['Rows'];
 header('Content-Type: application/json');
 exit(json_encode(array('count' => number_format($count))));
