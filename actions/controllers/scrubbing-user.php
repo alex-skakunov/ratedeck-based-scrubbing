@@ -13,11 +13,7 @@ if (!empty($_POST['areacode'])) {
   }
 }
 
-if ('admin' == $_SESSION['user']['level']) {
-  $maxPrice = !empty($_POST['max_price']) ? (float)$_POST['max_price'] : null;
-}
-
-$maxPrice = !empty($userRecord) ? $userRecord['max_price'] : 1;
+$maxPrice = !empty($userRecord) ? (float)$userRecord['max_price'] : 1;
 
 
 $isTheOnlyFile = sizeof($_FILES['file_source']['name']) == 1;
@@ -45,7 +41,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
             ':user_id' => $userId,
             ':original_filename' => $filename,
             ':temp_filename' => $_FILES['file_source']['tmp_name'][$index],
-            ':max_price' => (float)$_POST['max_price'],
+            ':max_price' => $maxPrice,
             ':include_wireless_type' => (int)$_POST['wireless'],
             ':include_landline_type' => (int)$_POST['landline'],
             ':specific_states_list' => !empty($areacodes) 
@@ -116,7 +112,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
         ':user_id' => $userId,
         ':original_filename' => $originalFilename,
         ':temp_filename' => $temporaryFilename,
-        ':max_price' => (float)$_POST['max_price'],
+        ':max_price' => $maxPrice,
         ':include_wireless_type' => (int)$_POST['wireless'],
         ':include_landline_type' => (int)$_POST['landline'],
         ':specific_states_list' => !empty($areacodes) 
