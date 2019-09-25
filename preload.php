@@ -46,7 +46,7 @@ if(empty($db))
 $blacklistsList = array(
     'lawsuits',
     'master',
-    'customer_er'
+    OWN // this one might be replaced by user id to refer their own blacklist
 );
 if( !ini_get("file_uploads") ) //check whether administrator must tune PHP
 {

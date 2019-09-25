@@ -23,12 +23,19 @@ $fQuickCSV->make_temporary = !true;
 $fQuickCSV->table_exists = true;
 $fQuickCSV->truncate_table = true;
 
-$fQuickCSV->import();
-
+try {
+  $fQuickCSV->import();
+}
+catch(Exception $e) {
+  query('UPDATE `queue` SET status="error", error_message=:error_message, updated_at=NOW() WHERE id=:id', array(
+    ':id' => $item['id'],
+    ':error_message' => 'File processing error'
+  ));
+  return;
+}
 
 if( !empty($fQuickCSV->error) )
 {
-    echo $fQuickCSV->error;
     query('UPDATE `queue` SET status="error", error_message=:error_message, updated_at=NOW() WHERE id=:id', array(
         ':id' => $item['id'],
         ':error_message' => $fQuickCSV->error
@@ -70,7 +77,7 @@ $additionalCriteriaClause = !empty($typeCriteria)
 $blacklistsClause = '';
 foreach($blacklistsList as $token) {
     if (!empty($item['include_' . $token . '_dnc'])) {
-        $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `blacklist_' . $token . '`)';
+        $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `' . get_blacklist_tablename($token) . '`)';
     }
 }
 
@@ -110,7 +117,7 @@ try {
         $sqlTemplate = 'SELECT number
             FROM scrub
             INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`
-            INNER JOIN `blacklist_' . $blacklistName . '` USING(`number`)
+            INNER JOIN `' . get_blacklist_tablename($blacklistName) . '` USING(`number`)
             WHERE ratedeck.`Rate` <= %f
               %s
             INTO OUTFILE "%s"';
@@ -118,11 +125,14 @@ try {
         $db->query($sql);
         new dBug(nl2br($sql));
 
-        $rowsCount = query('SELECT FOUND_ROWS()')->fetchColumn();
+        $rowsCount = (int)query('SELECT FOUND_ROWS()')->fetchColumn();
         query('UPDATE `queue` SET blacklist_'.$blacklistName.'_rows_count=:rows_count, updated_at=NOW() WHERE id=:id', array(
             ':id' => $item['id'],
             ':rows_count' => $rowsCount
         ));
+        if (0 === $rowsCount) {
+          @unlink($fullname);
+        }
       }
   }
 }

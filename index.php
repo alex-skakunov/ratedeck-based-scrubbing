@@ -3,7 +3,7 @@
 include "preload.php"; //this includes all necessary classes and configs
 
 if(empty($_REQUEST['page'])) {
-  $_REQUEST['page'] = 'ratedeck';
+  $_REQUEST['page'] = 'blacklist';
 }
 $_REQUEST['page'] = strtolower(trim($_REQUEST['page']));
 

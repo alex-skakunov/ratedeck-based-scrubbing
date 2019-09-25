@@ -5,7 +5,7 @@ check_admin_access();
 if (!empty($_GET['truncate'])) {
     $token = strtolower(trim($_GET['truncate']));
     if (in_array($token, $blacklistsList)) {
-        query('TRUNCATE TABLE blacklist_' . $token);
+        query('TRUNCATE TABLE ' . get_blacklist_tablename($token));
     }
     header('Location: ?page=blacklist&table_erased=' . $token);
     exit;
@@ -23,7 +23,7 @@ if (empty($_POST)) {
 
 $blacklistType = strtolower(trim($_POST['blacklist_type']));
 if (!in_array($blacklistType, $blacklistsList)) {
-    return $message = 'Please choose a DNC list to upload to';
+    return $errorMessage = 'Please choose a DNC list to upload to';
 }
 
 $errorCode = $_FILES['file_source']['error'];
@@ -33,7 +33,7 @@ if( 0 == $_FILES['file_source']['size'] )
 }
 
 if(!is_uploaded_file($_FILES['file_source']['tmp_name']) || UPLOAD_ERR_OK !== $errorCode ) {
-    return $message = $error = "Something went wrong while the upload";
+    return $errorMessage = "Something went wrong while the upload";
 }
 
 $temp_file = $_FILES['file_source']['tmp_name'];
@@ -53,7 +53,7 @@ if ($zip->open($our_file) === TRUE) {
 }
 
 $fQuickCSV = new Quick_CSV_import;
-$fQuickCSV->table_name = 'blacklist_' . $blacklistType;
+$fQuickCSV->table_name = get_blacklist_tablename($blacklistType);
 $fQuickCSV->file_name = $our_file;
 $fQuickCSV->use_csv_header = false;
 $fQuickCSV->make_temporary = false;
@@ -78,7 +78,7 @@ try {
     $message = 'The ' . ucfirst($blacklistType) . ' DNC list was uploaded successfully';
 }
 catch(Exception $e) {
-    return $message = $errorMessage = $e->getMessage();
+    return $errorMessage = $e->getMessage();
 }
 
 $userRecord = query(
@@ -87,7 +87,7 @@ $userRecord = query(
      WHERE `id` = ' . $userId)->fetch();
   
 if (empty($userRecord)) {
-    return $message = 'Could not find the current user in the database';
+    return $errorMessage = 'Could not find the current user in the database';
 }
   
 

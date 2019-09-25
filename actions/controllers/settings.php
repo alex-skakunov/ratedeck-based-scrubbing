@@ -10,6 +10,6 @@ if (!empty($_POST['user_submit'])) {
         $errorMessage = 'The password should not be empty';
         return;
     }
-    query('UPDATE `settings` SET `value`="' . md5($newPassword) . '" WHERE `name`="password"');
+    query('UPDATE `settings` SET `value`="' . md5(SALT . $newPassword) . '" WHERE `name`="password"');
     $message = 'The password has been successfully updated';
 }

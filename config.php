@@ -23,6 +23,7 @@ define("DB_NAME"    , 'ratedeck');
 define('DB_TABLE'   , 'ratedeck');
 
 define('SALT', 'some random data here');
+define('OWN', 'own'); // used for own blacklist
 
 define('REPORTS_EMAIL_ADDRESS', 'USERNAME@gmail.com');
 define('SMTP_USERNAME', 'USERNAME@gmail.com');

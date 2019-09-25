@@ -35,7 +35,7 @@ try {
     `password` = :pass
     WHERE `id` = ' . $userRecord['id'],
     array(
-      ':pass'     => md5($newPassword),
+      ':pass'     => md5(SALT . $newPassword),
     )
   );
 }

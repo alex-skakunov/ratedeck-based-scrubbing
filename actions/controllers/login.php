@@ -24,7 +24,7 @@ $userRecord = query(
      AND `password` = :pass',
   array(
     ':email' => $email,
-    ':pass'  => md5($password)
+    ':pass'  => md5(SALT . $password)
   ))->fetch();
 
 if (empty($userRecord)) {

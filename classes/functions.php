@@ -177,11 +177,33 @@ function check_admin_access() {
   }
 }
 
+function erase_user_queue($userId) {
+  $filesToDelete = query(
+    'SELECT id, temp_filename FROM `queue` WHERE `user_id`=' . $userId
+    )->fetchAll(PDO::FETCH_ASSOC);
+  foreach ($filesToDelete as $file) {
+      @unlink(TEMP_DIR . $file['temp_filename']);
+      @unlink(TEMP_DIR . $file['id'] . '.csv');
+      foreach ($blacklistsList as $token) {
+          @unlink(TEMP_DIR . $file['id'] . '_' . $token . '.csv');
+      }
+  }
+  query('DELETE FROM `queue` WHERE `user_id`=' . $userId);
+}
+
+function get_blacklist_tablename($token) {
+  if (OWN == $token) {
+    $userId = $_SESSION['user']['id'];
+    return 'blacklist_user_' . $userId;
+  }
+  return 'blacklist_' . $token;
+}
+
 function query($sql, $replacements=null) {
     global $db;
     $stmt = $db->prepare($sql);
     if (false === $stmt->execute($replacements)) {
-      new dBug($sql);
+      // new dBug($sql);
       error_log(print_r($stmt->errorInfo(), 1));
       throw new Exception($stmt->errorInfo()[2], $stmt->errorInfo()[1]);
     }
