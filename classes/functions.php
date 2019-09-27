@@ -178,7 +178,7 @@ function check_admin_access() {
 }
 
 function erase_user_queue($userId) {
-
+  global $blacklistsList;
   $filesToDelete = query(
     'SELECT id, temp_filename FROM `queue` WHERE `user_id`=' . $userId
     )->fetchAll(PDO::FETCH_ASSOC);
