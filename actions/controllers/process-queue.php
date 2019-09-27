@@ -77,7 +77,7 @@ $additionalCriteriaClause = !empty($typeCriteria)
 $blacklistsClause = '';
 foreach($blacklistsList as $token) {
     if (!empty($item['include_' . $token . '_dnc'])) {
-        $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `' . get_blacklist_tablename($token) . '`)';
+        $blacklistsClause .= chr(10) . ' AND scrub.`number` NOT IN (SELECT `number` FROM `' . get_blacklist_tablename($token, $item['user_id']) . '`)';
     }
 }
 
@@ -117,7 +117,7 @@ try {
         $sqlTemplate = 'SELECT number
             FROM scrub
             INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`
-            INNER JOIN `' . get_blacklist_tablename($blacklistName) . '` USING(`number`)
+            INNER JOIN `' . get_blacklist_tablename($blacklistName, $item['user_id']) . '` USING(`number`)
             WHERE ratedeck.`Rate` <= %f
               %s
             INTO OUTFILE "%s"';
