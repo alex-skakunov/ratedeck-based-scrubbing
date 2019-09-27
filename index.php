@@ -12,6 +12,7 @@ if (empty($_SESSION['authenticated'])
                 $_REQUEST['page'],
                 array(
                     'login',
+                    'process-queue',
                     'user-forgot-password',
                     'user-password-recovery'
                 )
