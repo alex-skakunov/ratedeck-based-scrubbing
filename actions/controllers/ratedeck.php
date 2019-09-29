@@ -42,7 +42,6 @@ if( !empty($_POST) ) //form was submitted
       $fQuickCSV->make_temporary = false;
       $fQuickCSV->table_exists = true;
       $fQuickCSV->truncate_table = true;
-      $fQuickCSV->field_separate_char = ',';
       $fQuickCSV->encoding = 'utf8';
       $fQuickCSV->field_enclose_char = '"';
       $fQuickCSV->field_escape_char = '\\';
