@@ -27,7 +27,7 @@ class Quick_CSV_import
   public $file_name;  //where to import from
   public $use_csv_header  = true; //use first line of file OR generated columns names
   public $line_separate_char = '\n'; //character(s) to separate lines (usually \n ) 
-  public $field_separate_char = ","; //character to separate fields
+  public $field_separate_char = ""; //character to separate fields
   public $field_enclose_char  = "\""; //character to enclose fields, which contain separator char into content
   public $field_escape_char   = "\\";  //char to escape special symbols
   public $error; //error message
@@ -51,6 +51,10 @@ class Quick_CSV_import
       $this->create_import_table();
     }
     
+    if (empty($this->field_separate_char)) {
+      $this->field_separate_char = CSV::auto_detect_separator($this->file_name, ',');
+    }
+        
     if( !in_array( $this->line_separate_char, array('\n', '\r', '\r\n' ) ) )
     {
         $this->line_separate_char = '\n';

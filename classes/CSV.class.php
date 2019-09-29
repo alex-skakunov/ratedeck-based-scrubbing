@@ -76,11 +76,18 @@ class CSV
     return $db->getRow();
   }
 
+  public static function auto_detect_separator($filepath, $default=null) {
+    $file = fopen($filepath, 'r');
+    $line = fgets($file);
+    return self::try_separators($line, $default);
+  }
+
+
   //gets count of each possible CSV separator
   //returns most appropriative separator (by max count in the string)
   public static function try_separators($line, $default=null)
   {
-    $csv_separators = array(1=>",", ";", "|", "\\", "/", "#", "!", "*", "-");
+    $csv_separators = array(1=>",", ";", "\t");
     $max_similar = 0;
     $index       = 0;
     foreach($csv_separators as $i=>$sep)
@@ -96,7 +103,8 @@ class CSV
     {
       return $csv_separators[$index];
     }
-    elseif( !empty( $default ) )
+    
+    if( !empty( $default ) )
     {
       return $default;
     }

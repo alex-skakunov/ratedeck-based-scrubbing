@@ -13,7 +13,7 @@
       <td align="right"><label for="number"><b>DNC file:</b></label></td>
       <td width="20px">&nbsp;</td>
       <td style="padding-bottom: 30px; text-align: left; margin-left: 30px; vertical-align: middle">
-          <input type="file" name="file_source" id="file_source" class="edt" accept=".csv, .txt, .zip, application/zip, text/csv, text/plain"/>
+          <input type="file" name="file_source" id="file_source" class="edt" accept=".csv, .tsv, .ssv, .txt, .zip, application/zip, text/csv, text/plain"/>
       </td>
     </tr>
     <tr>
