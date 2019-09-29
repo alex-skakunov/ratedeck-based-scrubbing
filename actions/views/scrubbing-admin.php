@@ -61,16 +61,7 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
                       <? if (!empty($theLastQueuedItem)) : ?>
                       <small style="color:gray">If you don't upload a new file, the "<em><?=$theLastQueuedItem['filename']?></em>" will be used</small>
                       <? endif; ?>
-
-
-                      <? /*
-                      <div class="progress">
-                        <div class="progress-bar" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100">25%</div>
-                      </div>
-                      */ ?>
-
                     </div>
-
                 </div>
 
                 <div class="form-group row">
@@ -136,6 +127,20 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
                     <a href="#" onclick="$('div#states_list input').each(function() {$(this).prop('checked', 1); $('form').attr('dirty', 1);}); return false;"><small>select all</small></a> /
                     <a href="#" onclick="$('div#states_list input').each(function() {$(this).prop('checked', 0); $('form').attr('dirty', 1);}); return false;"><small>select none</small></a>
                   </div>
+                </div>
+
+                <div class="form-group row">
+                    <div class="col col-2">Order:</div>
+                    <div class="col col-10" style="text-align: left;">
+                        <label for="order">
+                          <select name="order" id="order">
+                            <option value="1">As is</option>
+                            <option value="2">Asceding</option>
+                            <option value="3">Descending</option>
+                            <option value="4">Random</option>
+                          </select>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="form-group row">
@@ -322,6 +327,7 @@ function applySettings(settings) {
       <th scope="col">DNC list</th>
       <th scope="col">Type</th>
       <th scope="col">States</th>
+      <th scope="col">Order</th>
       <th scope="col">—</th>
     </tr>
   </thead>
@@ -378,6 +384,7 @@ function applySettings(settings) {
                   }
             ?>
           </td>
+          <td><?=ucfirst($row['download_order'])?></td>
           <td align="left">
             <?
             switch ($row['status']) {

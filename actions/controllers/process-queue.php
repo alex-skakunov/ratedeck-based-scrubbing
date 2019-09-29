@@ -80,11 +80,26 @@ $max_price = (float)$item['max_price'];
 $wireless = !empty($item['include_wireless_type']) ? 1 : 0;
 $landline = !empty($item['include_landline_type']) ? 1 : 0;
 
+switch($item['download_order']) {
+  case 'asc':
+      $downloadOrder = 'ORDER BY `number` ASC';
+      break;
+  case 'desc':
+      $downloadOrder = 'ORDER BY `number` DESC';
+      break;
+  case 'random':
+      $downloadOrder = 'ORDER BY RAND()';
+      break;
+  default:
+      $downloadOrder = '';
+}
+
 $sqlTemplate = 'SELECT number
         FROM scrub
         INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`
         WHERE ratedeck.`Rate` <= %f
           %s
+        ' . $downloadOrder . '
         INTO OUTFILE "%s"';
 $typeCriteria = array();
 if (!empty($wireless)) {

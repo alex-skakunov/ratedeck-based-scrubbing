@@ -125,6 +125,20 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
                 </div>
 
                 <div class="form-group row">
+                    <div class="col col-2">Order:</div>
+                    <div class="col col-10" style="text-align: left;">
+                        <label for="order">
+                          <select name="order" id="order">
+                            <option value="1">As is</option>
+                            <option value="2">Asceding</option>
+                            <option value="3">Descending</option>
+                            <option value="4">Random</option>
+                          </select>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="form-group row">
                     <div class="col-2"></div>
                     <div class="col col-10" style="text-align: left;">
                         <label for="is_blacklisted_report_required">
@@ -307,6 +321,7 @@ function applySettings(settings) {
       <th scope="col">DNC list</th>
       <th scope="col">Type</th>
       <th scope="col">States</th>
+      <th scope="col">Order</th>
       <th scope="col">—</th>
     </tr>
   </thead>
@@ -362,6 +377,7 @@ function applySettings(settings) {
                   }
             ?>
           </td>
+          <td><?=ucfirst($row['download_order'])?></td>
           <td align="left">
             <?
             switch ($row['status']) {

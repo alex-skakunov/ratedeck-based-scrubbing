@@ -25,7 +25,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
 
     if (!$isTheOnlyFile && UPLOAD_ERR_OK != $errorCode) {
         $errorMessage = $uploadErrors[$errorCode];
-        query('INSERT INTO `queue`(`user_id`, `filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `status`, `error_message`, `created_at`) VALUES (
+        query('INSERT INTO `queue`(`user_id`, `filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`, `specific_states_list`, `download_order`, `status`, `error_message`, `created_at`) VALUES (
                 :user_id,
                 :original_filename,
                 :temp_filename,
@@ -33,6 +33,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
                 :include_wireless_type,
                 :include_landline_type,
                 :specific_states_list,
+                :download_order,
                 "error",
                 :error_message,
                 NOW()
@@ -46,6 +47,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
             ':specific_states_list' => !empty($areacodes) 
               ? implode(',', $areacodes)
               : null,
+            ':download_order' => (int)$_POST['order'],
             ':error_message' => $errorMessage
         ));
         continue;
@@ -105,7 +107,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
 
     query('INSERT INTO `queue`(`user_id`, `filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`,
         `specific_states_list`, `include_lawsuits_dnc`, `include_master_dnc`, `include_own_dnc`, `is_blacklisted_report_required`,
-        `rows_count`, `created_at`) VALUES (
+        `download_order`, `rows_count`, `created_at`) VALUES (
             :user_id,
             :original_filename,
             :temp_filename,
@@ -117,6 +119,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
             :include_master_dnc,
             :include_own_dnc,
             :is_blacklisted_report_required,
+            :download_order,
             :rows_count,
             NOW()
     )', array(
@@ -133,6 +136,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
         ':include_master_dnc' => !empty($_POST['include_master_dnc']) ? 1 : 0,
         ':include_own_dnc' => !empty($_POST['include_own_dnc']) ? 1 : 0,
         ':is_blacklisted_report_required' => !empty($_POST['is_blacklisted_report_required']) ? 1 : 0,
+        ':download_order' => (int)$_POST['order'],
         ':rows_count' => $rows_count
     ));
 }
