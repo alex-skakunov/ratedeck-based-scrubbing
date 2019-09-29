@@ -5,9 +5,10 @@ include "config.php"; //load database settings, folders paths and such stuff
 require_once 'vendor/autoload.php';
 
 set_include_path( CLASSES_DIR );
-require "Quick_CSV_import.class.php";
-require "functions.php";
-require "dBug.php";
+require_once "Quick_CSV_import.class.php";
+require_once 'CSV.class.php';
+require_once "functions.php";
+require_once "dBug.php";
 
 if( !is_writable( TEMP_DIR ) )
 {
@@ -58,7 +59,6 @@ ini_set('auto_detect_line_endings', 1);
 session_save_path(SESSIONS_DIR);
 session_start();
 setcookie(session_name(),session_id(),time() + SESSION_TTL, "/");
-
 
 $uploadErrors = array(
     UPLOAD_ERR_INI_SIZE => 'The uploaded file exceeds the upload_max_filesize directive in php.ini.',

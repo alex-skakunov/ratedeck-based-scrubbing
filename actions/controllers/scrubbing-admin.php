@@ -3,16 +3,16 @@
 check_admin_access();
 
 if(empty($_POST)) {
-  return;
+    return;
 }
 
 
 $areacodes = array();
 
 if (!empty($_POST['areacode'])) {
-  foreach ($_POST['areacode'] as $code) {
-    $areacodes[$code] = $code;
-  }
+    foreach ($_POST['areacode'] as $code) {
+      $areacodes[$code] = $code;
+    }
 }
 
 $isTheOnlyFile = sizeof($_FILES['file_source']['name']) == 1;
@@ -55,25 +55,37 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
     if (is_uploaded_file($temp_file)) {
         $our_file  = tempnam(TEMP_DIR, 'scrub');
         if ( !move_uploaded_file( $temp_file, $our_file ) ) {
-          $errorMessage = 'Could not copy [' . $temp_file .'] to [' . $our_file . ']';
-          return;
+            $errorMessage = 'Could not copy [' . $temp_file .'] to [' . $our_file . ']';
+            return;
         }
 
-        $zip = new ZipArchive;
-        if ($zip->open($our_file) === TRUE) {
-            $csvFilename = $zip->getNameIndex(0);
-            $zip->extractTo(TEMP_DIR, array($csvFilename));
-            $zip->close();
-            rename(TEMP_DIR . $csvFilename, $our_file);
+        $pathParts = pathinfo($our_file);
+        if ('zip' == strtolower($pathParts['extension'])) {
+            $zip = new ZipArchive;
+            if ($zip->open($our_file) === TRUE) {
+                $innerFilename = $zip->getNameIndex(0);
+                $zip->extractTo(TEMP_DIR, array($innerFilename));
+                $zip->close();
+                rename(TEMP_DIR . $innerFilename, $our_file);
+            }
         }
     }
 
     if (!empty($_FILES['file_source']['name'][$index])) {
         $originalFilename = $_FILES['file_source']['name'][$index];
+        $pathParts = pathinfo($originalFilename);
+        echo '<pre>';
+        print_r($pathParts);
+        $extension = strtolower($pathParts['extension']);
+        if (in_array($extension, ['xls', 'xlsx'])) {
+            echo "renaming $our_file to $our_file.$extension";
+            rename($our_file, $our_file . '.' . $extension);
+            $our_file .= '.' . $extension;
+        }
     } elseif (!empty($theLastQueuedItem)) {
         $originalFilename = $theLastQueuedItem['filename'];
     } else {
-      return $errorMessage = "No file was uploaded";
+        return $errorMessage = "No file was uploaded";
     }
 
     if (!empty($our_file)) {
@@ -83,11 +95,11 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
     }
 
     if (!empty($_FILES['file_source']['name'][$index])) {
-      $rows_count = null;
+        $rows_count = null;
     } elseif (!empty($theLastQueuedItem)) {
-      $rows_count = $theLastQueuedItem['rows_count'];
+        $rows_count = $theLastQueuedItem['rows_count'];
     } else {
-      $rows_count = null;
+        $rows_count = null;
     }
 
 

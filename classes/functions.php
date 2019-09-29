@@ -184,6 +184,12 @@ function erase_user_queue($userId) {
     )->fetchAll(PDO::FETCH_ASSOC);
   foreach ($filesToDelete as $file) {
       @unlink(TEMP_DIR . $file['temp_filename']);
+
+      $pathParts = pathinfo($file['temp_filename']);
+      if (in_array(strtolower($pathParts['extension']), ['xls', 'xlsx'])) {
+        @unlink(TEMP_DIR . $pathParts['filename'] . '.csv');
+      }
+
       @unlink(TEMP_DIR . $file['id'] . '.csv');
       foreach ($blacklistsList as $token) {
           @unlink(TEMP_DIR . $file['id'] . '_' . $token . '.csv');

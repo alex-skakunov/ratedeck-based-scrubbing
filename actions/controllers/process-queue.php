@@ -14,22 +14,46 @@ if (empty($item)) {
 
 query('UPDATE `queue` SET STATUS="processing", error_message=NULL, updated_at=NOW() WHERE id=' . $item['id']);
 
+$filename = TEMP_DIR . $item['temp_filename'];
+
+// convert xls file to csv
+$pathParts = pathinfo($filename);
+if (in_array($pathParts['extension'], ['xls', 'xlsx'])) {
+  if (!file_exists($pathParts['filename'] . '.csv')) {
+    $reader = \PhpOffice\PhpSpreadsheet\IOFactory::createReaderForFile($filename);
+    $reader->setReadDataOnly(true);
+    $spreadsheet = $reader->load($filename);
+    $filename = TEMP_DIR . $pathParts['filename'] . '.csv';
+    $writer = new \PhpOffice\PhpSpreadsheet\Writer\Csv($spreadsheet);
+    $writer->save($filename);
+  }
+}
+
 $fQuickCSV = new Quick_CSV_import;
 
 $fQuickCSV->table_name = 'scrub';
-$fQuickCSV->file_name = TEMP_DIR . $item['temp_filename'];
+$fQuickCSV->file_name = $filename;
 $fQuickCSV->use_csv_header = false;
 $fQuickCSV->make_temporary = !true;
 $fQuickCSV->table_exists = true;
 $fQuickCSV->truncate_table = true;
+$fQuickCSV->field_enclose_char = '"';
+$fQuickCSV->fields_list = array('@area', '@number');
+$fQuickCSV->parameters = array(
+    // this implements support of both formats:
+    // 1. 1234567890 (just a number)
+    // 2. 123,4567890 (area code and the number)
+    'number' => 'CONCAT(@area, IFNULL(@number, ""))'
+);
 
 try {
   $fQuickCSV->import();
 }
 catch(Exception $e) {
+  echo $e->getMessage();
   query('UPDATE `queue` SET status="error", error_message=:error_message, updated_at=NOW() WHERE id=:id', array(
     ':id' => $item['id'],
-    ':error_message' => 'File processing error'
+    ':error_message' => 'File processing error: ' . $e->getMessage()
   ));
   return;
 }
@@ -89,6 +113,7 @@ if (!empty($item['specific_states_list'])) {
 
 $filename = $item['id'] . '.csv';
 $fullname = TEMP_DIR . $filename;
+@unlink($fullname);
 $sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause . $blacklistsClause, $fullname);
 $db->query($sql);
 new dBug(nl2br($sql));
@@ -114,6 +139,7 @@ try {
             continue;
         }
         $fullname = TEMP_DIR . $item['id'] . "_$blacklistName.csv";
+        @unlink($fullname);
         $sqlTemplate = 'SELECT number
             FROM scrub
             INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`

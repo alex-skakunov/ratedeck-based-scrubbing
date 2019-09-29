@@ -56,7 +56,7 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
                     <label for="file_source" class="col-2 col-form-label">CSV file:</label><br/>
 
                     <div class="col col-10">
-                      <input type="file" name="file_source[]" id="file_source" class="form-control-file" accept=".csv, .txt, .zip, application/zip, text/csv, text/plain" multiple="multiple" /><br/>
+                      <input type="file" name="file_source[]" id="file_source" class="form-control-file" accept=".csv, .tsv, .xls, .xlsx, .txt, .zip, application/zip, text/csv, text/plain" multiple="multiple" /><br/>
 
                       <? if (!empty($theLastQueuedItem)) : ?>
                       <small style="color:gray">If you don't upload a new file, the "<em><?=$theLastQueuedItem['filename']?></em>" will be used</small>

@@ -8,11 +8,6 @@ if (!empty($_GET['erase_queue'])) {
   exit;
 }
 
-$userRecord = query(
-  'SELECT `max_price`
-   FROM `user`
-   WHERE `id` = ' . $userId)->fetch();
-
 $wireless = 1;
 $landline = 1;
 $areacodes_all = empty($_POST['areacode']);

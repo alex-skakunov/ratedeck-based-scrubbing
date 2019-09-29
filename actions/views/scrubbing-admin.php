@@ -56,7 +56,7 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
                     <label for="file_source" class="col-2 col-form-label">CSV file:</label><br/>
 
                     <div class="col col-10">
-                      <input type="file" name="file_source[]" id="file_source" class="form-control-file" accept=".csv, .txt, .zip, application/zip, text/csv, text/plain" multiple="multiple" /><br/>
+                      <input type="file" name="file_source[]" id="file_source" class="form-control-file" accept=".csv, .xls, .xlsx, .txt, .zip, application/zip, text/csv, text/plain" multiple="multiple" /><br/>
 
                       <? if (!empty($theLastQueuedItem)) : ?>
                       <small style="color:gray">If you don't upload a new file, the "<em><?=$theLastQueuedItem['filename']?></em>" will be used</small>
@@ -383,7 +383,7 @@ function applySettings(settings) {
             switch ($row['status']) {
                 case 'success':
                     if ($row['final_rows_count']) {
-                      $url = 'temp/csv/'. $row['id'] . '.csv';
+                      $url = 'index.php?page=download-csv&id='. $row['id'];
                       echo '<a href="'.$url.'">Download CSV</a>';
                       if (!empty($row['final_rows_count'])) {
                         echo ' <small class="text-muted">(' . number_format($row['final_rows_count']) . ' rows)</small>';
@@ -398,7 +398,7 @@ function applySettings(settings) {
                           if (empty($row['include_' . $blacklistName . '_dnc'])) {
                               continue;
                           }
-                          $url = 'temp/csv/'. $row['id'] . "_$blacklistName.csv";
+                          $url = 'index.php?page=download-csv&blacklist='.$blacklistName.'&id='. $row['id'];
                           echo '<br/><small>' . ucfirst($blacklistName) . ' DNC: </small>';
                           switch($row['blacklist_'.$blacklistName.'_rows_count']) {
                             case null:
