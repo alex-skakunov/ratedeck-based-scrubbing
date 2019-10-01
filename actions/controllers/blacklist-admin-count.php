@@ -18,7 +18,7 @@ else {
         . get_blacklist_tablename($name)
         . '"')->fetch();
     $count = $result['Rows'];
-    $count = 563123432;
+
     if ($count > 1000000) {
         $countAsString = '~' . number_format(round($count/1000000)) . ' mln.';
     }
