@@ -45,7 +45,7 @@
   <small><a href="?page=blacklist&truncate=1" onclick="return confirm('Are you sure you want to erase the DNC list?')">Click here to erase the DNC list</a></small><br/>
   <small class="text-muted"> Count: <span id="count">Loading...</span></small>
         <script>
-            $.getJSON('index.php?page=blacklist-count', function(data) {$('#count').html('approx. ' + data.count);});
+            $.getJSON('index.php?page=blacklist-count', function(data) {$('#count').html(data.count);});
         </script>
 </p>
 

@@ -4,7 +4,6 @@ if (empty($_GET)) return;
 
 $userId = $_SESSION['user']['id'];
 
-$result = query('SHOW TABLE STATUS WHERE Name = "blacklist_user_' . $userId . '"')->fetch();
-$count = $result['Rows'];
+$count = query('SELECT COUNT(*) FROM `blacklist_user_' . $userId . '`')->fetchColumn();
 header('Content-Type: application/json');
 exit(json_encode(array('count' => number_format($count))));
