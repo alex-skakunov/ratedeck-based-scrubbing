@@ -46,8 +46,7 @@ class Quick_CSV_import
     if( empty($this->table_name) )
       $this->table_name = "temp_".date("d_m_Y_H_i_s");
     
-    if( !$this->table_exists )
-    {
+    if( !$this->table_exists ) {
       $this->create_import_table();
     }
     
@@ -147,7 +146,7 @@ class Quick_CSV_import
     {
       $arr = array();
       foreach($this->arr_csv_columns as $i=>$column)
-        $arr[] = "`".$column['name']."` CHAR(20) NOT NULL";
+        $arr[] = "`".$column['name']."` TEXT NOT NULL";
       if( !empty($this->additional_create) )
         $arr[] = $this->additional_create;
       $sql .= implode(",", $arr);
