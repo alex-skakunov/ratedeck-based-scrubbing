@@ -164,13 +164,16 @@ try {
             }
             $fullname = TEMP_DIR . $item['id'] . "_$blacklistName.csv";
             @unlink($fullname);
-            $sqlTemplate = 'SELECT scrub.`number`
+            $sqlTemplate = 'SELECT ' . $selectList . '
                 FROM '.$tableName.' scrub
                 INNER JOIN `ratedeck` ON SUBSTR(scrub.`number`, 1, 6) = ratedeck.`NPANXX`
                 INNER JOIN `' . get_blacklist_tablename($blacklistName, $item['user_id']) . '` USING(`number`)
                 WHERE ratedeck.`Rate` <= %f
                   %s
-                INTO OUTFILE "%s"';
+                INTO OUTFILE "%s"
+                FIELDS TERMINATED BY ","
+                OPTIONALLY ENCLOSED BY "\""';
+        
             $sql = sprintf($sqlTemplate, $max_price, $additionalCriteriaClause, $fullname);
             $db->query($sql);
             new dBug(nl2br($sql));
