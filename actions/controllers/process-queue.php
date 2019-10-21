@@ -129,6 +129,10 @@ foreach($blacklistsList as $token) {
     }
 }
 
+if (!empty($item['include_prefix_dnc'])) {
+    $blacklistsClause .= chr(10) . ' AND SUBSTRING(scrub.`number`, 1, 6) NOT IN (SELECT `number` FROM `blacklist_prefix_dnc`)';    
+}
+
 if (!empty($item['specific_states_list'])) {
     $statesArray = explode(',', $item['specific_states_list']);
     $statesListAsString = '"' . implode('", "', $statesArray) . '"';

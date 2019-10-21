@@ -85,6 +85,15 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
                 </div>
 
                 <div class="form-group row">
+                    <label class="col-2 col-form-label" for="include_prefix_dnc">Robocall check:</label>
+                    <div class="col col-10" style="text-align: left;">
+                        <label for="include_prefix_dnc">
+                            <input type="checkbox" name="include_prefix_dnc" id="include_prefix_dnc" value="1" checked="checked" /> APP Scrubbing check
+                        </label><br/>
+                    </div>
+                </div>
+
+                <div class="form-group row">
                   <div class="col col-2">Type:</div>
                   <div class="col col-10" style="text-align: left;">
                       <div class="form-check">
@@ -354,6 +363,7 @@ function save_phone_column(id) {
       <th scope="col">DNC list</th>
       <th scope="col">Type</th>
       <th scope="col">States</th>
+      <th scope="col">Robocall check</th>
       <th scope="col">Order</th>
       <th scope="col">—</th>
     </tr>
@@ -423,6 +433,7 @@ function save_phone_column(id) {
                   }
             ?>
           </td>
+          <td><?=!empty($row['include_prefix_dnc']) ? 'yes' : 'no'?></td>
           <td><?=ucfirst($row['sort_order'])?></td>
           <td id="status_<?=$row["id"]?>" align="center">
             <?
