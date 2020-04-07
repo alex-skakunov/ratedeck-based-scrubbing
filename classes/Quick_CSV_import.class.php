@@ -72,6 +72,7 @@ class Quick_CSV_import
 
     $sql = 'LOAD DATA LOCAL INFILE "'. $this->file_name .'"
               IGNORE INTO TABLE `'. $this->table_name .'`
+              CHARACTER SET latin1
               FIELDS
                   TERMINATED BY "'. $this->field_separate_char .'"
                   OPTIONALLY ENCLOSED BY "'. str_replace('"', '\"', $this->field_enclose_char) .'"
