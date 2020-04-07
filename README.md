@@ -46,8 +46,9 @@ Then make sure to restart the service
 * create database `ratedeck`
 * 
 ```
-CREATE USER 'ratedeck'@'localhost' IDENTIFIED BY '...';
-GRANT ALL PRIVILEGES ON ratedeck.* TO 'ratedeck'@'localhost';
+CREATE USER 'ratedeck'@'localhost'  IDENTIFIED BY 'pass';
+GRANT ALL PRIVILEGES ON ratedeck.* TO 'ratedeck'@'localhost' IDENTIFIED BY 'pass';
+GRANT FILE ON *.* TO 'ratedeck'@'localhost' IDENTIFIED BY 'pass';
 FLUSH PRIVILEGES;
 ```
 * edit `/etc/apparmor.d/usr.sbin.mysqld`
