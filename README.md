@@ -33,12 +33,31 @@ Copy the `ini` file location there and make the same changes.
 ```
 
 MySQL:
+* make sure this returns empty value:
+```
+SHOW VARIABLES LIKE "secure_file_priv"
+```
+If not, For Ubuntu, edit the file `/etc/mysql/mysql.conf.d/mysqld.cnf` and add the following line at the end:
+```
+secure_file_priv=""
+```
+Then make sure to restart the service
+
 * create database `ratedeck`
 * 
 ```
 CREATE USER 'ratedeck'@'localhost' IDENTIFIED BY '...';
 GRANT ALL PRIVILEGES ON ratedeck.* TO 'ratedeck'@'localhost';
 FLUSH PRIVILEGES;
+```
+* edit `/etc/apparmor.d/usr.sbin.mysqld`
+add this line somewhere below:
+```
+  /var/www/html/ratedeck/temp/csv/ rw,
+```
+and then restart the service:
+```
+sudo /etc/init.d/apparmor reload
 ```
 
 Troubleshooting:
