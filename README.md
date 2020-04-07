@@ -18,6 +18,7 @@ Edit this settings as a ROOT:
 * short_open_tag = On
 * memory_limit = 2Gb
 * post_max_size = 2Gb
+* upload_max_filesize = 2Gb
 
 Create a web file "test.php", write this inside and open it in a browser:
 ```
