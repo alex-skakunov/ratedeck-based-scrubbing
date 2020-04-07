@@ -61,6 +61,11 @@ and then restart the service:
 sudo /etc/init.d/apparmor reload
 ```
 
+Add this to Crontab (`crontab -e`):
+```
+* * * * * wget --spider http://199.168.97.106/ratedeck/index.php?page=process-queue
+```
+
 Troubleshooting:
 * if emails from Gmail account fail to run, visit this page to unlock it — https://accounts.google.com/b/4/DisplayUnlockCaptcha
 Number 4 means it's your 4th open Gmail account (you can get this number from your open Gmail page).
