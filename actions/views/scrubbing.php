@@ -28,7 +28,7 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
           <h5 class="modal-title">Queue a new file</h5>
         </div>
         <div class="col col-5">
-           <select name="template" style="width: 13em">
+           <select name="template" id="template" style="width: 13em">
                <optgroup>
                    <option value="0" selected>- choose or save client -</option>
                    <option value="">Save as new...</option>
@@ -49,7 +49,7 @@ var templatesData = <?=json_encode($templatesHashedList);?>;
       </div>
       <div class="modal-body">
 
-          <form method="post" id="form" enctype="multipart/form-data" onsubmit="$('#submit').attr('disabled', 'diabled'); $('#loader').show();">
+          <form method="post" id="form" enctype="multipart/form-data" onsubmit="$('#submit').attr('disabled', 'disabled'); $('#loader').show();">
              <input type="hidden" name="version" value="1.0" />
 
                 <div class="form-group row">
@@ -281,7 +281,7 @@ function deleteClient() {
     $('#delete_client').hide();
 }
 
-$('select').change(function() {
+$('select#template').change(function() {
   $('#delete_client').hide();
   var id = $(this).val();
   if ("0" === id) {
