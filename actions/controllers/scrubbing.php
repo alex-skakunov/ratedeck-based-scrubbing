@@ -160,7 +160,7 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
     $columnsToChooseFrom = count($columns) > 1 ? $columns : null;
 
     query('INSERT INTO `queue`(`user_id`, `filename`, `temp_filename`, `max_price`, `include_wireless_type`, `include_landline_type`,
-        `specific_states_list`, `include_lawsuits_dnc`, `include_master_dnc`, `include_prefix_dnc`, `include_own_dnc`, `is_blacklisted_report_required`,
+        `specific_states_list`, `include_lawsuits_dnc`, `include_master_dnc`, `include_roboapps_dnc`, `include_disconects_dnc`, `include_prefix_dnc`, `include_own_dnc`, `is_blacklisted_report_required`,
         `status`, `sort_order`, `rows_count`, `columns_list`, `created_at`) VALUES (
             :user_id,
             :original_filename,
@@ -171,6 +171,8 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
             :specific_states_list,
             :include_lawsuits_dnc,
             :include_master_dnc,
+            :include_roboapps_dnc,
+            :include_disconects_dnc,
             :include_prefix_dnc,
             :include_own_dnc,
             :is_blacklisted_report_required,
@@ -191,6 +193,8 @@ foreach ($_FILES['file_source']['name'] as $index => $filename) {
           : null,
         ':include_lawsuits_dnc' => !empty($_POST['include_lawsuits_dnc']) ? 1 : 0,
         ':include_master_dnc' => !empty($_POST['include_master_dnc']) ? 1 : 0,
+        ':include_roboapps_dnc' => !empty($_POST['include_roboapps_dnc']) ? 1 : 0,
+        ':include_disconects_dnc' => !empty($_POST['include_disconects_dnc']) ? 1 : 0,
         ':include_prefix_dnc' => !empty($_POST['include_prefix_dnc']) ? 1 : 0,
         ':include_own_dnc' => !empty($_POST['include_own_dnc']) ? 1 : 0,
         ':is_blacklisted_report_required' => !empty($_POST['is_blacklisted_report_required']) ? 1 : 0,
